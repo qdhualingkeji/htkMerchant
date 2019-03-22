@@ -12,28 +12,16 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 
-public class NewOrderAdapter extends BaseAdapter {
-
-    public List<String> getmData() {
-        return mData;
-    }
-
-    public void setmData(List<String> mData) {
-        this.mData = mData;
-    }
+public class NewOrderProductAdapter extends BaseAdapter {
 
     private List<String> mData;
-    private MainActivity context;
-
-    public NewOrderAdapter(MainActivity context){
-        this.context = context;
-        mData=new ArrayList<String>();
-    }
+    private MainActivity activity;
 
     public void setNewData(){
+        mData=new ArrayList<String>();
         mData.add("aaa");
         mData.add("bbb");
-        notifyDataSetChanged();
+        mData.add("ccc");
     }
 
     @Override
@@ -43,7 +31,7 @@ public class NewOrderAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return mData.get(position);
     }
 
     @Override
@@ -55,11 +43,11 @@ public class NewOrderAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView==null){
-            convertView = context.getLayoutInflater().inflate(R.layout.item_new_order,parent,false);
+            convertView = activity.getLayoutInflater().inflate(R.layout.item_new_order_product,parent,false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
-        else {
+        else{
             holder = (ViewHolder) convertView.getTag();
         }
         return convertView;

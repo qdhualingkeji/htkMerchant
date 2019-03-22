@@ -68,7 +68,7 @@ public class MyPagerAdapter extends PagerAdapter {
 
         mRefresher1.setOnRefreshListener(new MyListener());
         mAdapter1 = new NewOrderAdapter(mainActivity);
-        //mAdapter1.setNewData();
+        mAdapter1.setNewData();
         mListView1.setAdapter(mAdapter1);
         views.add(view1);
         mRefresher1.autoRefresh();

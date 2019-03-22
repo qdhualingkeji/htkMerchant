@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initLogic() {
         getScreenSize();
+        initMyPagerAdapter();
         mToolBar.setTitle(getResources().getString(R.string.app_name));//设置Toolbar标题
         mToolBar.setTitleTextColor(Color.parseColor("#ffffff")); //设置标题颜色
         setSupportActionBar(mToolBar);
