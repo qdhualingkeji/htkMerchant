@@ -4,12 +4,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.entity.OrderRecordEntity;
 import com.hualing.htk_merchant.global.GlobalData;
+import com.hualing.htk_merchant.model.OrderProduct;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -18,6 +21,7 @@ import com.loopj.android.http.RequestParams;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NewOrderAdapter extends BaseAdapter {
@@ -94,13 +98,52 @@ public class NewOrderAdapter extends BaseAdapter {
         else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        OrderRecordEntity.DataBean orderRecord = mData.get(position);
+        holder.orderNumberTV.setText("订单:"+orderRecord.getOrderNumber());
+        holder.orderTimeTV.setText(orderRecord.getOrderTime());
+        holder.receiptNameTV.setText(orderRecord.getReceiptName().substring(0,1)+(orderRecord.getSex()==0?"女士":"先生"));
+        holder.receivingCallTV.setText(orderRecord.getReceivingCall());
+        holder.shippingAddressTV.setText(orderRecord.getShippingAddress());
+
+        NewOrderProductAdapter opAdapter = holder.orderProductAdapter;
+        opAdapter = new NewOrderProductAdapter(context);
+        opAdapter.setNewData(orderRecord.getProductLists());
+        opAdapter.notifyDataSetChanged();
+        holder.orderProductLV.setAdapter(opAdapter);
+
+        holder.jiSuanPaid(opAdapter.getmData());
         return convertView;
     }
 
     class ViewHolder {
 
+        @BindView(R.id.orderNumber_tv)
+        TextView orderNumberTV;
+        @BindView(R.id.orderTime_tv)
+        TextView orderTimeTV;
+        @BindView(R.id.receiptName_tv)
+        TextView receiptNameTV;
+        @BindView(R.id.receivingCall_tv)
+        TextView receivingCallTV;
+        @BindView(R.id.shippingAddress_tv)
+        TextView shippingAddressTV;
+        @BindView(R.id.orderProduct_lv)
+        ListView orderProductLV;
+        private NewOrderProductAdapter orderProductAdapter;
+        @BindView(R.id.paid_tv)
+        TextView paidTV;
+
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
+        }
+
+        public void jiSuanPaid(List<OrderProduct> opList){
+            double sumPrice=0;
+            for(OrderProduct op:opList){
+                sumPrice+=op.getPrice();
+            }
+            paidTV.setText("（已支付）￥"+sumPrice);
         }
     }
 }
