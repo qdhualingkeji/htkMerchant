@@ -107,12 +107,14 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/accept_but"
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:text="接单"
                 android:layout_alignParentLeft="true"/>
 
             <Button
+                android:id="@+id/refuse_but"
                 android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:text="拒单"

@@ -2,6 +2,7 @@ package com.hualing.htk_merchant.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
 
@@ -99,4 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     abstract protected int getLayoutResId();
 
+    public void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }

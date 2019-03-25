@@ -24,14 +24,6 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="3dp"
-        android:text="催单"
-        android:textColor="@drawable/pager_switcher"
-        android:background="@color/pagerSwitcherBg"/>
-    <Button
-        android:id="@+id/dot4"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_margin="3dp"
         android:text="已完成"
         android:textColor="@drawable/pager_switcher"
         android:background="@color/pagerSwitcherBg"/>

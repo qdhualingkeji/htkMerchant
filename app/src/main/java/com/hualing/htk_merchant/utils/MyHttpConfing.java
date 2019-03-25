@@ -8,10 +8,17 @@ public class MyHttpConfing {
 
     public static final String tag = "TAG-->";
 
-    public static final String baseUrl = "http://120.27.5.36:8080/htkApp/API/merchantAppAPI/";//客户版本外网
+    public static final String baseUrl = "http://120.27.5.36:8080/htkApp/API/";//客户版本外网
+    public static final String merchantAppUrl = baseUrl + "merchantAppAPI/";
+    public static final String payUrl = baseUrl + "paymentInterfaceAPI/";
 
     /* 获得新订单数据 */
-    public static final String getNewOrderList = baseUrl + "getNewOrderList";
+    public static final String getNewOrderList = merchantAppUrl + "getNewOrderList";
+    /*取消订单*/
+    public static final String cancelOrder = payUrl + "callUpRefundInterface";
+    /*确认订单*/
+    public static final String confirmTheOrder = merchantAppUrl + "confirmTheOrder";
+
     /* 用户登录 */
     public static final String login = baseUrl + "login";
     /* 用户注册 */
@@ -28,7 +35,6 @@ public class MyHttpConfing {
     public static final String getDaiQiangDanDetail = baseUrl + "getDaiQiangDanDetail";
     /* 获得待送达数据 */
     public static final String getDaiSongDa = baseUrl + "getDaiSongDa";
-
 }
 
 

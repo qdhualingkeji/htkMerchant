@@ -34,8 +34,6 @@ public class MainActivity extends BaseActivity {
     Button mDot2;
     @BindView(R.id.dot3)
     Button mDot3;
-    @BindView(R.id.dot4)
-    Button mDot4;
     private MyPagerAdapter mPagerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -53,12 +51,11 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        int width = (int) (TheApplication.getScreenWidth()/4);
+        int width = (int) (TheApplication.getScreenWidth()/3);
         int height=100;
         mDot1.setLayoutParams(new LinearLayout.LayoutParams(width,height));
         mDot2.setLayoutParams(new LinearLayout.LayoutParams(width,height));
         mDot3.setLayoutParams(new LinearLayout.LayoutParams(width,height));
-        mDot4.setLayoutParams(new LinearLayout.LayoutParams(width,height));
 
         //创建返回键，并实现打开关/闭监听
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolBar, R.string.open, R.string.close) {
@@ -108,20 +105,22 @@ public class MainActivity extends BaseActivity {
                 newOrderAdapter.notifyDataSetChanged();
                 mDot1.setSelected(true);
                 break;
-                /*
             case 1:
                 Log.e("position2========",""+position);
+                /*
                 DaiQuHuoAdapter daiQuHuoAdapter = mPagerAdapter.getmAdapter2();
                 daiQuHuoAdapter.setNewData();
                 daiQuHuoAdapter.notifyDataSetChanged();
+                */
                 mDot2.setSelected(true);
                 break;
             case 2:
                 Log.e("position3========",""+position);
+                /*
                 mPagerAdapter.getmAdapter3().notifyDataSetChanged();
+                */
                 mDot3.setSelected(true);
                 break;
-                */
         }
     }
 

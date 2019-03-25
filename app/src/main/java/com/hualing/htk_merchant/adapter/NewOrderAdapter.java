@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.entity.OrderRecordEntity;
 import com.hualing.htk_merchant.global.GlobalData;
+import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
@@ -23,6 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class NewOrderAdapter extends BaseAdapter {
 
@@ -88,7 +91,7 @@ public class NewOrderAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView==null){
             convertView = context.getLayoutInflater().inflate(R.layout.item_new_order,parent,false);
@@ -99,7 +102,7 @@ public class NewOrderAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        OrderRecordEntity.DataBean orderRecord = mData.get(position);
+        final OrderRecordEntity.DataBean orderRecord = mData.get(position);
         holder.orderNumberTV.setText("订单:"+orderRecord.getOrderNumber());
         holder.orderTimeTV.setText(orderRecord.getOrderTime());
         holder.receiptNameTV.setText(orderRecord.getReceiptName().substring(0,1)+(orderRecord.getSex()==0?"女士":"先生"));
@@ -113,6 +116,19 @@ public class NewOrderAdapter extends BaseAdapter {
         holder.orderProductLV.setAdapter(opAdapter);
 
         holder.jiSuanPaid(opAdapter.getmData());
+
+        holder.acceptBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmOrder(orderRecord.getOrderNumber(),position);
+            }
+        });
+        holder.refuseBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancelOrder(orderRecord.getOrderNumber(),position);
+            }
+        });
         return convertView;
     }
 
@@ -133,6 +149,10 @@ public class NewOrderAdapter extends BaseAdapter {
         private NewOrderProductAdapter orderProductAdapter;
         @BindView(R.id.paid_tv)
         TextView paidTV;
+        @BindView(R.id.accept_but)
+        Button acceptBut;
+        @BindView(R.id.refuse_but)
+        Button refuseBut;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -145,5 +165,81 @@ public class NewOrderAdapter extends BaseAdapter {
             }
             paidTV.setText("（已支付）￥"+sumPrice);
         }
+    }
+
+    /**
+     *
+     * @param orderNumber
+     * @param position
+     */
+    private void confirmOrder(String orderNumber, final int position){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("orderNumber", orderNumber);
+        AsynClient.post(MyHttpConfing.confirmTheOrder, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                //Log.e("rawJsonData===",""+rawJsonData);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.i(MyHttpConfing.tag, rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                if(commonMsg.getCode()==0){
+                    mData.remove(position);
+                    notifyDataSetChanged();
+                }
+
+                context.showMessage(commonMsg.getMessage());
+
+            }
+        });
+    }
+
+    /**
+     * 取消订单
+     * @param orderNumber
+     * @param position
+     */
+    private void cancelOrder(String orderNumber, final int position) {
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("orderNumber", orderNumber);
+        params.put("content", "其他原因");
+        params.put("mark", 0);
+        AsynClient.post(MyHttpConfing.cancelOrder, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                //Log.e("rawJsonData===",""+rawJsonData);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.i(MyHttpConfing.tag, rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                mData.remove(position);
+                notifyDataSetChanged();
+                context.showMessage(commonMsg.getMessage());
+
+            }
+        });
+
     }
 }
