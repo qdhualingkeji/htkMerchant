@@ -12,8 +12,6 @@ import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.entity.OrderRecordEntity;
-import com.hualing.htk_merchant.global.GlobalData;
-import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
@@ -25,9 +23,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class NewOrderAdapter extends BaseAdapter {
+public class FinishedAdapter extends BaseAdapter {
 
     public List<OrderRecordEntity.DataBean> getmData() {
         return mData;
@@ -40,7 +37,7 @@ public class NewOrderAdapter extends BaseAdapter {
     private List<OrderRecordEntity.DataBean> mData;
     private MainActivity context;
 
-    public NewOrderAdapter(MainActivity context){
+    public FinishedAdapter(MainActivity context){
         this.context = context;
         mData=new ArrayList<OrderRecordEntity.DataBean>();
     }
@@ -50,7 +47,7 @@ public class NewOrderAdapter extends BaseAdapter {
         params.put("userId", 90);
         params.put("statusCode", 3);
 
-        AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
+        AsynClient.post(MyHttpConfing.getFinishedOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
             protected Object parseResponse(String rawJsonData) throws Throwable {
                 return null;
@@ -94,7 +91,7 @@ public class NewOrderAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView==null){
-            convertView = context.getLayoutInflater().inflate(R.layout.item_new_order,parent,false);
+            convertView = context.getLayoutInflater().inflate(R.layout.item_delivery_order,parent,false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
@@ -117,16 +114,10 @@ public class NewOrderAdapter extends BaseAdapter {
 
         holder.jiSuanPaid(opAdapter.getmData());
 
-        holder.acceptBut.setOnClickListener(new View.OnClickListener() {
+        holder.confirmBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                confirmOrder(orderRecord.getOrderNumber(),position);
-            }
-        });
-        holder.refuseBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cancelOrder(orderRecord.getOrderNumber(),position);
+                comfirm(orderRecord.getOrderNumber(),position);
             }
         });
         return convertView;
@@ -149,10 +140,8 @@ public class NewOrderAdapter extends BaseAdapter {
         private NewOrderProductAdapter orderProductAdapter;
         @BindView(R.id.paid_tv)
         TextView paidTV;
-        @BindView(R.id.accept_but)
-        Button acceptBut;
-        @BindView(R.id.refuse_but)
-        Button refuseBut;
+        @BindView(R.id.confirm_but)
+        Button confirmBut;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -168,78 +157,11 @@ public class NewOrderAdapter extends BaseAdapter {
     }
 
     /**
-     *  确认订单
+     * 确认订单
      * @param orderNumber
      * @param position
      */
-    private void confirmOrder(String orderNumber, final int position){
-        RequestParams params = AsynClient.getRequestParams();
-        params.put("orderNumber", orderNumber);
-        AsynClient.post(MyHttpConfing.confirmTheOrder, context, params, new GsonHttpResponseHandler() {
-            @Override
-            protected Object parseResponse(String rawJsonData) throws Throwable {
-                return null;
-            }
-
-            @Override
-            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
-
-                Gson gson = new Gson();
-                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
-                if(commonMsg.getCode()==0){
-                    mData.remove(position);
-                    notifyDataSetChanged();
-                }
-
-                context.showMessage(commonMsg.getMessage());
-
-            }
-        });
-    }
-
-    /**
-     * 取消订单
-     * @param orderNumber
-     * @param position
-     */
-    private void cancelOrder(String orderNumber, final int position) {
-        RequestParams params = AsynClient.getRequestParams();
-        params.put("orderNumber", orderNumber);
-        params.put("content", "其他原因");
-        params.put("mark", 0);
-        AsynClient.post(MyHttpConfing.cancelOrder, context, params, new GsonHttpResponseHandler() {
-            @Override
-            protected Object parseResponse(String rawJsonData) throws Throwable {
-                return null;
-            }
-
-            @Override
-            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
-
-                Gson gson = new Gson();
-                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
-                mData.remove(position);
-                notifyDataSetChanged();
-                context.showMessage(commonMsg.getMessage());
-
-            }
-        });
+    private void comfirm(String orderNumber, int position){
 
     }
 }

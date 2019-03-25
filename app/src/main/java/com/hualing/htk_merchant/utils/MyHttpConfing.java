@@ -11,6 +11,7 @@ public class MyHttpConfing {
     public static final String baseUrl = "http://120.27.5.36:8080/htkApp/API/";//客户版本外网
     public static final String merchantAppUrl = baseUrl + "merchantAppAPI/";
     public static final String payUrl = baseUrl + "paymentInterfaceAPI/";
+    public static final String riderUrl = baseUrl + "riderAPI/";
 
     /* 获得新订单数据 */
     public static final String getNewOrderList = merchantAppUrl + "getNewOrderList";
@@ -18,6 +19,10 @@ public class MyHttpConfing {
     public static final String cancelOrder = payUrl + "callUpRefundInterface";
     /*确认订单*/
     public static final String confirmTheOrder = merchantAppUrl + "confirmTheOrder";
+    /*自行配送*/
+    public static final String orderItemsToShip = riderUrl + "order/itemsToShip";
+    /* 获得已完成订单数据 */
+    public static final String getFinishedOrderList = merchantAppUrl + "getFinishedOrderList";
 
     /* 用户登录 */
     public static final String login = baseUrl + "login";

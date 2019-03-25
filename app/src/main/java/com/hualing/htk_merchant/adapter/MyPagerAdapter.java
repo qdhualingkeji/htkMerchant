@@ -36,27 +36,25 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     private NewOrderAdapter mAdapter1;
-    /*
-    private DaiQuHuoAdapter mAdapter2;
+    private DeliveryAdapter mAdapter2;
 
-    public DaiQuHuoAdapter getmAdapter2() {
+    public DeliveryAdapter getmAdapter2() {
         return mAdapter2;
     }
 
-    public void setmAdapter2(DaiQuHuoAdapter mAdapter2) {
+    public void setmAdapter2(DeliveryAdapter mAdapter2) {
         this.mAdapter2 = mAdapter2;
     }
 
-    public DaiSongDaAdapter getmAdapter3() {
+    public FinishedAdapter getmAdapter3() {
         return mAdapter3;
     }
 
-    public void setmAdapter3(DaiSongDaAdapter mAdapter3) {
+    public void setmAdapter3(FinishedAdapter mAdapter3) {
         this.mAdapter3 = mAdapter3;
     }
 
-    private DaiSongDaAdapter mAdapter3;
-    */
+    private FinishedAdapter mAdapter3;
 
     public MyPagerAdapter(MainActivity mainActivity){
 
@@ -73,15 +71,12 @@ public class MyPagerAdapter extends PagerAdapter {
         views.add(view1);
         mRefresher1.autoRefresh();
 
-        /*
         view2 = View.inflate(mainActivity,R.layout.banner_layout_two_pager,null);
         mListView2 = view2.findViewById(R.id.listView);
         mRefresher2 = view2.findViewById(R.id.refresher);
 
         mRefresher2.setOnRefreshListener(new MyListener());
-        mAdapter2 = new DaiQuHuoAdapter(mainActivity);
-        mAdapter2.setLongitude(longitude);
-        mAdapter2.setLatitude(latitude);
+        mAdapter2 = new DeliveryAdapter(mainActivity);
         mAdapter2.setNewData();
         mListView2.setAdapter(mAdapter2);
         views.add(view2);
@@ -92,14 +87,11 @@ public class MyPagerAdapter extends PagerAdapter {
         mRefresher3 = view3.findViewById(R.id.refresher);
 
         mRefresher3.setOnRefreshListener(new MyListener());
-        mAdapter3 = new DaiSongDaAdapter(mainActivity);
-        mAdapter3.setLongitude(longitude);
-        mAdapter3.setLatitude(latitude);
+        mAdapter3 = new FinishedAdapter(mainActivity);
         mAdapter3.setNewData();
         mListView3.setAdapter(mAdapter3);
         views.add(view3);
         //mRefresher3.autoRefresh();
-        */
     }
 
     @Override
