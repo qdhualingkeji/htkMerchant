@@ -2,89 +2,56 @@ package com.hualing.htk_merchant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.entity.LoginUserEntity;
-import com.hualing.htk_merchant.entity.SuccessEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
+import com.hualing.htk_merchant.util.IntentUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
 import com.loopj.android.http.RequestParams;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class LoginActivity extends BaseActivity {
+public class LaunchActivity extends BaseActivity {
 
-    @BindView(R.id.userNameValue)
-    EditText userNameValue;
-    @BindView(R.id.passwordValue)
-    EditText passwordValue;
+    private static final long DELAY = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
     }
 
     @Override
     protected void initLogic() {
-
-    }
-
-    @Override
-    protected void getDataFormWeb() {
-
-    }
-
-    @Override
-    protected void debugShow() {
-
-    }
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_login;
-    }
-
-    @OnClick({R.id.loginBtn})
-    public void onViewClicked(View v){
-        switch (v.getId()){
-            case R.id.loginBtn:
-                String userName = userNameValue.getText().toString();
-                String password = passwordValue.getText().toString();
-                if(TextUtils.isEmpty(userName)){
-                    showMessage("请输入商户号");
-                    return;
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (SharedPreferenceUtil.ifHasLocalMerchantInfo()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            toLogin();
+                        }
+                    });
+                }else {
+                    IntentUtil.openActivity(LaunchActivity.this,LoginActivity.class);
+                    AllActivitiesHolder.removeAct(LaunchActivity.this);
                 }
-                if(TextUtils.isEmpty(password)){
-                    showMessage("请输入密码");
-                    return;
-                }
-                login(userName,password);
-                break;
-        }
+            }
+        },DELAY);
     }
 
-    /***
-     * 商户登录
-     * @param userName
-     * @param password
-     */
-    private void login(final String userName, final String password){
+    private void toLogin(){
         RequestParams params = AsynClient.getRequestParams();
-        params.put("userName", userName);
-        params.put("password", password);
+        params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
+        params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);
 
         AsynClient.post(MyHttpConfing.login, this, params, new GsonHttpResponseHandler() {
             @Override
@@ -94,7 +61,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                Log.e("rawJsonData======",""+rawJsonData);
+
             }
 
             @Override
@@ -112,17 +79,31 @@ public class LoginActivity extends BaseActivity {
                     GlobalData.shopName = loginUserData.getShopName();
                     GlobalData.state = loginUserData.getState();
 
-                    SharedPreferenceUtil.rememberMerchant(userName, password);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
                     startActivity(intent);
-                    AllActivitiesHolder.removeAct(LoginActivity.this);
                 }
                 else {
                     showMessage(loginUserEntity.getMessage());
+                    IntentUtil.openActivity(LaunchActivity.this,LoginActivity.class);
                 }
+                AllActivitiesHolder.removeAct(LaunchActivity.this);
 
             }
         });
+    }
+
+    @Override
+    protected void getDataFormWeb() {
+
+    }
+
+    @Override
+    protected void debugShow() {
+
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_launch;
     }
 }
