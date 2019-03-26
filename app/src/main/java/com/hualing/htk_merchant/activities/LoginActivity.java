@@ -108,7 +108,9 @@ public class LoginActivity extends BaseActivity {
                     GlobalData.userID = loginUserData.getUserId();
                     GlobalData.userName = loginUserData.getUserName();
                     GlobalData.password = loginUserData.getPassword();
-                    GlobalData.nickName = loginUserData.getNickName();
+                    GlobalData.avatarImg = loginUserData.getAvatarImg();
+                    GlobalData.shopName = loginUserData.getShopName();
+                    GlobalData.state = loginUserData.getState();
 
                     //SharedPreferenceUtil.rememberMerchant(userName, password);
 

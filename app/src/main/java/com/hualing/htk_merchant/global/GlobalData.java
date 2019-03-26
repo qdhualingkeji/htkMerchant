@@ -31,6 +31,12 @@ public class GlobalData {
 
     public static String nickName ;
 
+    public static String avatarImg ;
+
+    public static String shopName ;
+
+    public static int state;
+
     //当前功能业务线
     public static int currentFunctionType = FunctionType.NON_SELECTED ;
 

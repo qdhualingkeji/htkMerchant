@@ -1,6 +1,7 @@
 package com.hualing.htk_merchant.activities;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,16 +13,29 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.adapter.MyPagerAdapter;
 import com.hualing.htk_merchant.adapter.NewOrderAdapter;
+import com.hualing.htk_merchant.aframework.yoni.YoniClient;
+import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.global.TheApplication;
+import com.hualing.htk_merchant.util.AllActivitiesHolder;
+import com.hualing.htk_merchant.util.IntentUtil;
+import com.hualing.htk_merchant.util.SharedPreferenceUtil;
+import com.hualing.htk_merchant.utils.ImageLoadManager;
 
 public class MainActivity extends BaseActivity {
 
+    @BindView(R.id.shopName_tv)
+    TextView mShopNameTV;
+    @BindView(R.id.state_tv)
+    TextView mStateTV;
     @BindView(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.toolBar)
@@ -34,6 +48,8 @@ public class MainActivity extends BaseActivity {
     Button mDot2;
     @BindView(R.id.dot3)
     Button mDot3;
+    @BindView(R.id.portrait)
+    SimpleDraweeView mPortrait;
     private MyPagerAdapter mPagerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -71,6 +87,12 @@ public class MainActivity extends BaseActivity {
         };
         mDrawerToggle.syncState();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+
+        //ImageLoadManager.getInstance().setImage("http://img1.imgtn.bdimg.com/it/u=1282290067,2091746976&fm=26&gp=0.jpg", mPortrait);
+        Uri uri = Uri.parse("http://120.27.5.36:8080/htkApp/"+GlobalData.avatarImg);
+        mPortrait.setImageURI(uri);
+        mShopNameTV.setText(GlobalData.shopName);
+        mStateTV.setText(GlobalData.state==1?"营业中":"休息中");
     }
 
     @Override
@@ -86,6 +108,21 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_main;
+    }
+
+    @OnClick({R.id.exit_but})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.exit_but:
+                GlobalData.userID = 0;
+                //之后获取和用户相关的服务就不需要额外传userId了
+                YoniClient.getInstance().setUser(GlobalData.userID+"");
+                //清除本地密码
+                SharedPreferenceUtil.logout();
+                AllActivitiesHolder.finishAllAct();
+                IntentUtil.openActivity(this, LoginActivity.class);
+                break;
+        }
     }
 
     /**

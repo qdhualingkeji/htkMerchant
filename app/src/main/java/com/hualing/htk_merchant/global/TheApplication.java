@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.hualing.htk_merchant.R;
 
 import java.io.File;
@@ -77,6 +78,9 @@ public class TheApplication extends Application {
         //设置启动页的时间和图片
         GlobalData.setLaunchDelayDuration(2000);
 //        GlobalData.setLaunchDrawableId(R.drawable.launch);
+
+        //初始化Fresco
+        Fresco.initialize(this);
 
         appRootDirectory = new File(appDirectoryPath);
         if (appRootDirectory.exists() && appRootDirectory.isDirectory()) {
