@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.entity.OrderRecordEntity;
+import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
 import com.hualing.htk_merchant.utils.AsynClient;
@@ -45,7 +46,7 @@ public class DeliveryAdapter extends BaseAdapter {
 
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
-        params.put("userId", 90);
+        params.put("userId", GlobalData.userID);
         params.put("statusCode", 2);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
@@ -102,6 +103,7 @@ public class DeliveryAdapter extends BaseAdapter {
 
         final OrderRecordEntity.DataBean orderRecord = mData.get(position);
         holder.orderNumberTV.setText("订单:"+orderRecord.getOrderNumber());
+        holder.statusCodeTV.setText("订单状态（配送中）");
         holder.orderTimeTV.setText(orderRecord.getOrderTime());
         holder.receiptNameTV.setText(orderRecord.getReceiptName().substring(0,1)+(orderRecord.getSex()==0?"女士":"先生"));
         holder.receivingCallTV.setText(orderRecord.getReceivingCall());
@@ -134,6 +136,8 @@ public class DeliveryAdapter extends BaseAdapter {
 
         @BindView(R.id.orderNumber_tv)
         TextView orderNumberTV;
+        @BindView(R.id.statusCode_tv)
+        TextView statusCodeTV;
         @BindView(R.id.orderTime_tv)
         TextView orderTimeTV;
         @BindView(R.id.receiptName_tv)

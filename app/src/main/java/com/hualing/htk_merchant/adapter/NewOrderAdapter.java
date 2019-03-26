@@ -47,8 +47,8 @@ public class NewOrderAdapter extends BaseAdapter {
 
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
-        params.put("userId", 90);
-        params.put("statusCode", 3);
+        params.put("userId", GlobalData.userID);
+        params.put("statusCode", 1);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -104,6 +104,7 @@ public class NewOrderAdapter extends BaseAdapter {
 
         final OrderRecordEntity.DataBean orderRecord = mData.get(position);
         holder.orderNumberTV.setText("订单:"+orderRecord.getOrderNumber());
+        holder.statusCodeTV.setText("订单状态（待接单）");
         holder.orderTimeTV.setText(orderRecord.getOrderTime());
         holder.receiptNameTV.setText(orderRecord.getReceiptName().substring(0,1)+(orderRecord.getSex()==0?"女士":"先生"));
         holder.receivingCallTV.setText(orderRecord.getReceivingCall());
@@ -136,6 +137,8 @@ public class NewOrderAdapter extends BaseAdapter {
 
         @BindView(R.id.orderNumber_tv)
         TextView orderNumberTV;
+        @BindView(R.id.statusCode_tv)
+        TextView statusCodeTV;
         @BindView(R.id.orderTime_tv)
         TextView orderTimeTV;
         @BindView(R.id.receiptName_tv)

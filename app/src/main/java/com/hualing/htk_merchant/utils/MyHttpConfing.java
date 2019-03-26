@@ -19,13 +19,15 @@ public class MyHttpConfing {
     public static final String cancelOrder = payUrl + "callUpRefundInterface";
     /*确认订单*/
     public static final String confirmTheOrder = merchantAppUrl + "confirmTheOrder";
+    /*确认已完成订单*/
+    public static final String confirmFinishedOrder = merchantAppUrl + "confirmFinishedOrder";
     /*自行配送*/
     public static final String orderItemsToShip = riderUrl + "order/itemsToShip";
     /* 获得已完成订单数据 */
     public static final String getFinishedOrderList = merchantAppUrl + "getFinishedOrderList";
+    /* 商户登录 */
+    public static final String login = merchantAppUrl + "login";
 
-    /* 用户登录 */
-    public static final String login = baseUrl + "login";
     /* 用户注册 */
     public static final String registered = baseUrl + "register";
     /* 确认抢单 */

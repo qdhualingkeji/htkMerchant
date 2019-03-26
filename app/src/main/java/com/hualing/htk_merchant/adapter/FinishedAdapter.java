@@ -12,6 +12,8 @@ import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.entity.OrderRecordEntity;
+import com.hualing.htk_merchant.global.GlobalData;
+import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
@@ -44,8 +46,8 @@ public class FinishedAdapter extends BaseAdapter {
 
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
-        params.put("userId", 90);
-        params.put("statusCode", 3);
+        params.put("userId", GlobalData.userID);
+        params.put("statusCode", 4);
 
         AsynClient.post(MyHttpConfing.getFinishedOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -101,6 +103,7 @@ public class FinishedAdapter extends BaseAdapter {
 
         final OrderRecordEntity.DataBean orderRecord = mData.get(position);
         holder.orderNumberTV.setText("订单:"+orderRecord.getOrderNumber());
+        holder.statusCodeTV.setText("订单状态（已完成）");
         holder.orderTimeTV.setText(orderRecord.getOrderTime());
         holder.receiptNameTV.setText(orderRecord.getReceiptName().substring(0,1)+(orderRecord.getSex()==0?"女士":"先生"));
         holder.receivingCallTV.setText(orderRecord.getReceivingCall());
@@ -127,6 +130,8 @@ public class FinishedAdapter extends BaseAdapter {
 
         @BindView(R.id.orderNumber_tv)
         TextView orderNumberTV;
+        @BindView(R.id.statusCode_tv)
+        TextView statusCodeTV;
         @BindView(R.id.orderTime_tv)
         TextView orderTimeTV;
         @BindView(R.id.receiptName_tv)
@@ -161,7 +166,36 @@ public class FinishedAdapter extends BaseAdapter {
      * @param orderNumber
      * @param position
      */
-    private void comfirm(String orderNumber, int position){
+    private void comfirm(String orderNumber, final int position){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("orderNumber", orderNumber);
+        AsynClient.post(MyHttpConfing.confirmFinishedOrder, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
 
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                //Log.e("rawJsonData===",""+rawJsonData);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.i(MyHttpConfing.tag, rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                if(commonMsg.getCode()==0){
+                    mData.remove(position);
+                    notifyDataSetChanged();
+                }
+
+                context.showMessage(commonMsg.getMessage());
+
+            }
+        });
     }
 }

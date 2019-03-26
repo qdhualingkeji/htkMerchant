@@ -23,13 +23,13 @@ import com.hualing.htk_merchant.model.FunctionType;
  */
 
 public class GlobalData {
-    public static Integer riderID;
+    public static Integer userID;
 
-    public static String phone ;
+    public static String userName ;
 
     public static String password ;
 
-    public static String trueName ;
+    public static String nickName ;
 
     //当前功能业务线
     public static int currentFunctionType = FunctionType.NON_SELECTED ;
