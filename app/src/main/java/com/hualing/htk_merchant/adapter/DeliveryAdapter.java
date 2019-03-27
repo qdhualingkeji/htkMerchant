@@ -47,7 +47,7 @@ public class DeliveryAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 2);
+        params.put("statusCode", 1);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override

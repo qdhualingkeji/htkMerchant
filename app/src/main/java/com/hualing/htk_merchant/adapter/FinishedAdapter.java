@@ -47,7 +47,7 @@ public class FinishedAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 4);
+        params.put("statusCode", 3);
 
         AsynClient.post(MyHttpConfing.getFinishedOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -93,7 +93,7 @@ public class FinishedAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView==null){
-            convertView = context.getLayoutInflater().inflate(R.layout.item_delivery_order,parent,false);
+            convertView = context.getLayoutInflater().inflate(R.layout.item_finished_order,parent,false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }

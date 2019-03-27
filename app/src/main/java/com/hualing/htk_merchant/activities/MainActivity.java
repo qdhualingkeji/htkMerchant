@@ -20,6 +20,8 @@ import butterknife.OnClick;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hualing.htk_merchant.R;
+import com.hualing.htk_merchant.adapter.DeliveryAdapter;
+import com.hualing.htk_merchant.adapter.FinishedAdapter;
 import com.hualing.htk_merchant.adapter.MyPagerAdapter;
 import com.hualing.htk_merchant.adapter.NewOrderAdapter;
 import com.hualing.htk_merchant.aframework.yoni.YoniClient;
@@ -138,24 +140,22 @@ public class MainActivity extends BaseActivity {
             case 0:
                 Log.e("position1========",""+position);
                 NewOrderAdapter newOrderAdapter = mPagerAdapter.getmAdapter1();
-                //newOrderAdapter.setNewData();
+                newOrderAdapter.setNewData();
                 newOrderAdapter.notifyDataSetChanged();
                 mDot1.setSelected(true);
                 break;
             case 1:
                 Log.e("position2========",""+position);
-                /*
-                DaiQuHuoAdapter daiQuHuoAdapter = mPagerAdapter.getmAdapter2();
-                daiQuHuoAdapter.setNewData();
-                daiQuHuoAdapter.notifyDataSetChanged();
-                */
+                DeliveryAdapter deliveryAdapter = mPagerAdapter.getmAdapter2();
+                deliveryAdapter.setNewData();
+                deliveryAdapter.notifyDataSetChanged();
                 mDot2.setSelected(true);
                 break;
             case 2:
                 Log.e("position3========",""+position);
-                /*
-                mPagerAdapter.getmAdapter3().notifyDataSetChanged();
-                */
+                FinishedAdapter finishedAdapter = mPagerAdapter.getmAdapter3();
+                finishedAdapter.setNewData();
+                finishedAdapter.notifyDataSetChanged();
                 mDot3.setSelected(true);
                 break;
         }

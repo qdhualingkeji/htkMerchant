@@ -48,7 +48,7 @@ public class NewOrderAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 1);
+        params.put("statusCode", 0);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
