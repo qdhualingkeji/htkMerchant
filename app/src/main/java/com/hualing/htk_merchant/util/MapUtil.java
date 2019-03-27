@@ -8,6 +8,7 @@ import com.baidu.mapapi.model.LatLng;
 
 import java.io.File;
 
+//https://blog.csdn.net/i996573526/article/details/82117862
 public class MapUtil {
 
     public static final String PN_GAODE_MAP = "com.autonavi.minimap";// 高德地图包名

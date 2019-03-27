@@ -88,7 +88,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="请输入商户号"
-                android:text="15712773653"
                 android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
@@ -118,7 +117,6 @@
                 android:layout_height="50dp"
                 android:hint="请输入商户密码"
                 android:inputType="textPassword"
-                android:text="123456"
                 android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
