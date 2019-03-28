@@ -15,6 +15,7 @@ import com.hualing.htk_merchant.entity.OrderRecordEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
+import com.hualing.htk_merchant.util.MapUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -47,7 +48,7 @@ public class DeliveryAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 1);
+        params.put("statusCode", 3);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -117,6 +118,16 @@ public class DeliveryAdapter extends BaseAdapter {
 
         holder.jiSuanPaid(opAdapter.getmData());
 
+        holder.baiduMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MapUtil.isBaiduMapInstalled()){
+                    MapUtil.openBaiDuNavi(context, 0, 0, null, orderRecord.getLatitude(), orderRecord.getLongitude(), orderRecord.getShippingAddress());
+                } else {
+                    context.showMessage("尚未安装百度地图");
+                }
+            }
+        });
         holder.ziXingBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,6 +149,8 @@ public class DeliveryAdapter extends BaseAdapter {
         TextView orderNumberTV;
         @BindView(R.id.statusCode_tv)
         TextView statusCodeTV;
+        @BindView(R.id.baidu_map)
+        Button baiduMap;
         @BindView(R.id.orderTime_tv)
         TextView orderTimeTV;
         @BindView(R.id.receiptName_tv)

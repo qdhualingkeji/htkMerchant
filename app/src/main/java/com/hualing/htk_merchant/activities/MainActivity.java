@@ -112,9 +112,19 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    @OnClick({R.id.exit_but})
+    @OnClick({R.id.exit_but,R.id.dot1,R.id.dot2,R.id.dot3})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.dot1:
+                //mViewPager.setCurrentItem();
+                changeDot(0);
+                break;
+            case R.id.dot2:
+                changeDot(1);
+                break;
+            case R.id.dot3:
+                changeDot(2);
+                break;
             case R.id.exit_but:
                 GlobalData.userID = 0;
                 //之后获取和用户相关的服务就不需要额外传userId了
@@ -173,6 +183,7 @@ public class MainActivity extends BaseActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
@@ -182,6 +193,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+
             }
         });
         mDot1.setSelected(true);
