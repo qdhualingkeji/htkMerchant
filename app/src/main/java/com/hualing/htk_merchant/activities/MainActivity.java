@@ -116,14 +116,13 @@ public class MainActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.dot1:
-                //mViewPager.setCurrentItem();
-                changeDot(0);
+                mViewPager.setCurrentItem(0);
                 break;
             case R.id.dot2:
-                changeDot(1);
+                mViewPager.setCurrentItem(1);
                 break;
             case R.id.dot3:
-                changeDot(2);
+                mViewPager.setCurrentItem(2);
                 break;
             case R.id.exit_but:
                 GlobalData.userID = 0;

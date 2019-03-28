@@ -4,7 +4,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -128,18 +128,6 @@ public class DeliveryAdapter extends BaseAdapter {
                 }
             }
         });
-        holder.ziXingBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ziXingDelivery(orderRecord.getOrderNumber(),position);
-            }
-        });
-        holder.waiJieBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                context.showMessage("此功能尚未开通");
-            }
-        });
         return convertView;
     }
 
@@ -149,8 +137,8 @@ public class DeliveryAdapter extends BaseAdapter {
         TextView orderNumberTV;
         @BindView(R.id.statusCode_tv)
         TextView statusCodeTV;
-        @BindView(R.id.baidu_map)
-        Button baiduMap;
+        @BindView(R.id.baidu_map_layout)
+        LinearLayout baiduMap;
         @BindView(R.id.orderTime_tv)
         TextView orderTimeTV;
         @BindView(R.id.receiptName_tv)
@@ -164,10 +152,6 @@ public class DeliveryAdapter extends BaseAdapter {
         private NewOrderProductAdapter orderProductAdapter;
         @BindView(R.id.paid_tv)
         TextView paidTV;
-        @BindView(R.id.ziXing_but)
-        Button ziXingBut;
-        @BindView(R.id.waiJie_but)
-        Button waiJieBut;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -180,43 +164,5 @@ public class DeliveryAdapter extends BaseAdapter {
             }
             paidTV.setText("（已支付）￥"+sumPrice);
         }
-    }
-
-    /**
-     * 自行配送
-     * @param orderNumber
-     * @param position
-     */
-    private void ziXingDelivery(String orderNumber, final int position){
-        RequestParams params = AsynClient.getRequestParams();
-        params.put("orderNumber", orderNumber);
-        AsynClient.post(MyHttpConfing.orderItemsToShip, context, params, new GsonHttpResponseHandler() {
-            @Override
-            protected Object parseResponse(String rawJsonData) throws Throwable {
-                return null;
-            }
-
-            @Override
-            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
-
-                Gson gson = new Gson();
-                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
-                if(commonMsg.getCode()==0){
-                    mData.remove(position);
-                    notifyDataSetChanged();
-                }
-
-                context.showMessage(commonMsg.getMessage());
-
-            }
-        });
     }
 }

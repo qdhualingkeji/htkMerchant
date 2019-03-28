@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -29,6 +30,8 @@ import butterknife.OnClick;
 
 public class NewOrderAdapter extends BaseAdapter {
 
+    private static final int ZI_XING = 0;
+    static final int WAI_ZHAO = 1;
     public List<OrderRecordEntity.DataBean> getmData() {
         return mData;
     }
@@ -48,7 +51,7 @@ public class NewOrderAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 0);
+        params.put("statusCode", 3);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -118,10 +121,16 @@ public class NewOrderAdapter extends BaseAdapter {
 
         holder.jiSuanPaid(opAdapter.getmData());
 
+        int deliveryFlag = 0;
+        if(holder.ziXingRB.isChecked())
+            deliveryFlag = ZI_XING;
+        else
+            deliveryFlag = WAI_ZHAO;
+        final int finalDeliveryFlag = deliveryFlag;
         holder.acceptBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                confirmOrder(orderRecord.getOrderNumber(),position);
+                confirmOrder(orderRecord.getOrderNumber(),position, finalDeliveryFlag);
             }
         });
         holder.refuseBut.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +161,10 @@ public class NewOrderAdapter extends BaseAdapter {
         private NewOrderProductAdapter orderProductAdapter;
         @BindView(R.id.paid_tv)
         TextView paidTV;
+        @BindView(R.id.ziXing_rb)
+        RadioButton ziXingRB;
+        @BindView(R.id.waiZhao_rb)
+        RadioButton waiZhaoRB;
         @BindView(R.id.accept_but)
         Button acceptBut;
         @BindView(R.id.refuse_but)
@@ -175,7 +188,7 @@ public class NewOrderAdapter extends BaseAdapter {
      * @param orderNumber
      * @param position
      */
-    private void confirmOrder(String orderNumber, final int position){
+    private void confirmOrder(final String orderNumber, final int position, final int deliveryFlag){
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         AsynClient.post(MyHttpConfing.confirmTheOrder, context, params, new GsonHttpResponseHandler() {
@@ -199,7 +212,11 @@ public class NewOrderAdapter extends BaseAdapter {
                 CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
                 if(commonMsg.getCode()==0){
                     mData.remove(position);
-                    notifyDataSetChanged();
+                    //notifyDataSetChanged();
+                    if(deliveryFlag==ZI_XING)
+                        ziXingDelivery(orderNumber,position);
+                    else
+                        context.showMessage("外招配送功能尚未开通");
                 }
 
                 context.showMessage(commonMsg.getMessage());
@@ -244,5 +261,43 @@ public class NewOrderAdapter extends BaseAdapter {
             }
         });
 
+    }
+
+    /**
+     * 自行配送
+     * @param orderNumber
+     * @param position
+     */
+    private void ziXingDelivery(String orderNumber, final int position){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("orderNumber", orderNumber);
+        AsynClient.post(MyHttpConfing.orderItemsToShip, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                //Log.e("rawJsonData===",""+rawJsonData);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.i(MyHttpConfing.tag, rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                if(commonMsg.getCode()==0){
+                    mData.remove(position);
+                    notifyDataSetChanged();
+                }
+
+                context.showMessage(commonMsg.getMessage());
+
+            }
+        });
     }
 }

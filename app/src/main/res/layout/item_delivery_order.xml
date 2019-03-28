@@ -33,13 +33,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"/>
 
-            <Button
-                android:id="@+id/baidu_map"
+            <LinearLayout
+                android:id="@+id/baidu_map_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:text="查看地图"/>
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/baidu_map"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="查看地图"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -119,26 +132,6 @@
                 android:text="（已支付）￥"/>
 
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/ziXing_but"
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:text="自行配送"
-                android:layout_alignParentLeft="true"/>
-
-            <Button
-                android:id="@+id/waiJie_but"
-                android:layout_width="150dp"
-                android:layout_height="match_parent"
-                android:text="外接配送"
-                android:layout_alignParentRight="true"/>
-
-        </RelativeLayout>
 
     </LinearLayout>
 
