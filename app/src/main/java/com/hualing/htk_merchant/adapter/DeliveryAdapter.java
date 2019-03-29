@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class DeliveryAdapter extends BaseAdapter {
     public void setNewData(){
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
-        params.put("statusCode", 3);
+        params.put("statusCode", 2);
 
         AsynClient.post(MyHttpConfing.getNewOrderList, context, params, new GsonHttpResponseHandler() {
             @Override
@@ -128,6 +129,12 @@ public class DeliveryAdapter extends BaseAdapter {
                 }
             }
         });
+        holder.receiptBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enterReceipt(orderRecord.getOrderNumber(),orderRecord.getAccountToken(),position);
+            }
+        });
         return convertView;
     }
 
@@ -152,6 +159,8 @@ public class DeliveryAdapter extends BaseAdapter {
         private NewOrderProductAdapter orderProductAdapter;
         @BindView(R.id.paid_tv)
         TextView paidTV;
+        @BindView(R.id.receipt_but)
+        Button receiptBut;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -164,5 +173,45 @@ public class DeliveryAdapter extends BaseAdapter {
             }
             paidTV.setText("（已支付）￥"+sumPrice);
         }
+    }
+
+    /**
+     * 确认收货
+     * @param orderNumber
+     * @param token
+     * @param position
+     */
+    public void enterReceipt(String orderNumber, String token, final int position){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("orderNumber", orderNumber);
+        params.put("token", token);
+        AsynClient.post(MyHttpConfing.enterReceipt, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                //Log.e("rawJsonData===",""+rawJsonData);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.i(MyHttpConfing.tag, rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                if(commonMsg.getCode()==0){
+                    mData.remove(position);
+                    notifyDataSetChanged();
+                }
+
+                context.showMessage(commonMsg.getMessage());
+
+            }
+        });
     }
 }
