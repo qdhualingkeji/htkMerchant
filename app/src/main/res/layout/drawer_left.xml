@@ -4,7 +4,7 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:id="@+id/menu"
               android:clickable="true"
-              android:layout_width="320dp"
+              android:layout_width="300dp"
               android:layout_height="match_parent"
               android:layout_gravity="start"
               android:background="@android:color/white"
@@ -21,10 +21,66 @@
             android:id="@+id/portrait"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_marginLeft="15dp"
             android:layout_centerVertical="true"
             fresco:placeholderImage="@drawable/default_portrait"
             fresco:actualImageScaleType="fitXY"
             fresco:roundAsCircle="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="85dp"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="商家名称:"
+                    android:textColor="@color/drawerleft_text"
+                    android:textSize="17sp"/>
+
+                <TextView
+                    android:id="@+id/shopName_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="游客"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="85dp"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="营业状态:"
+                    android:textColor="@color/drawerleft_text"
+                    android:textSize="17sp"/>
+
+                <TextView
+                    android:id="@+id/state_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="null"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -47,16 +103,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="商家名称:"
+                android:text="商品管理:"
                 android:textColor="@color/drawerleft_text"
                 android:textSize="17sp"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
             <TextView
-                android:id="@+id/shopName_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:text="游客"
+                android:text="商品添加"
                 android:textColor="@color/black"
                 android:textSize="17sp"/>
 
@@ -70,16 +131,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="营业状态:"
-                android:textColor="@color/drawerleft_text"
-                android:textSize="17sp"/>
-
-            <TextView
-                android:id="@+id/state_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:text="null"
+                android:text="商品查询"
                 android:textColor="@color/black"
                 android:textSize="17sp"/>
 
