@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProductAdapter extends SectionedBaseAdapter {
 
@@ -78,12 +81,26 @@ public class ProductAdapter extends SectionedBaseAdapter {
         }
 
         TakeoutProduct dataBean = mData.get(section).getTakeoutProductList().get(position);
+        holder.ifCanBuyTV.setText(dataBean.getIfCanBuy()==1?"已上架":"已下架");
+        if(dataBean.isShowCB())
+            holder.checkGoodsCB.setVisibility(CheckBox.VISIBLE);
+        else
+            holder.checkGoodsCB.setVisibility(CheckBox.INVISIBLE);
         String imgUrl = dataBean.getImgUrl();
-        Log.e("imgUrl===",""+imgUrl);
+        //Log.e("imgUrl===",""+imgUrl);
         if(!TextUtils.isEmpty(imgUrl)) {
             Uri uri = Uri.parse(imgUrl);
             holder.imgUrlSDV.setImageURI(uri);
         }
+        holder.productNameTV.setText(dataBean.getProductName());
+        holder.priceTV.setText("￥"+dataBean.getPrice());
+        holder.numTV.setText(dataBean.getInventory()+"/"+dataBean.getInventoryCount());
+        holder.editBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         return convertView;
     }
@@ -102,10 +119,35 @@ public class ProductAdapter extends SectionedBaseAdapter {
         return layout;
     }
 
+    public void showCheckGoodsCB(){
+        for(int i=0;i<getSectionCount();i++) {
+            for(int j=0;j<getCountForSection(i);j++) {
+                TakeoutProduct takeoutProduct = mData.get(i).getTakeoutProductList().get(j);
+                if(takeoutProduct.isShowCB())
+                    takeoutProduct.setShowCB(false);
+                else
+                    takeoutProduct.setShowCB(true);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     class ViewHolder {
 
+        @BindView(R.id.ifCanBuy_tv)
+        TextView ifCanBuyTV;
+        @BindView(R.id.checkGoods_cb)
+        CheckBox checkGoodsCB;
         @BindView(R.id.imgUrl_sdv)
         SimpleDraweeView imgUrlSDV;
+        @BindView(R.id.productName_tv)
+        TextView productNameTV;
+        @BindView(R.id.price_tv)
+        TextView priceTV;
+        @BindView(R.id.num_tv)
+        TextView numTV;
+        @BindView(R.id.edit_but)
+        Button editBut;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);

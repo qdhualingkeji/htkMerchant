@@ -8,6 +8,16 @@ import java.util.List;
 
 public class TakeoutProduct {
 
+    private boolean showCB;//是否显示复选框（这个属性是为了方便app端操作特意附加的）
+
+    public boolean isShowCB() {
+        return showCB;
+    }
+
+    public void setShowCB(boolean showCB) {
+        this.showCB = showCB;
+    }
+
     private int mark;
 
     public int getMark() {

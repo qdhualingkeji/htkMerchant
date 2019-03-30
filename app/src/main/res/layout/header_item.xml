@@ -16,4 +16,5 @@
         android:textStyle="bold"
         android:gravity="center_vertical"
         android:textColor="#000" />
+
 </LinearLayout>
