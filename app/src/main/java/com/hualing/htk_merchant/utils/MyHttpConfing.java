@@ -31,6 +31,10 @@ public class MyHttpConfing {
     public static final String enterReceipt = riderUrl + "enterReceipt";
     /*获得产品信息*/
     public static final String getProductData = merchantAppUrl + "takeout/product/getProductData";
+    /*商品上架*/
+    public static final String takeOn = merchantAppUrl + "takeout/product/takeOn";
+    /*商品下架*/
+    public static final String takeOff = merchantAppUrl + "takeout/product/takeOff";
 
     /* 用户注册 */
     public static final String registered = baseUrl + "register";

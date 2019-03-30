@@ -46,39 +46,6 @@ public class ProductListActivity extends BaseActivity {
     private List<ReturnCategoryAndProductEntity.DataBean> mData;
 
 
-    public void initData(){
-        RequestParams params = AsynClient.getRequestParams();
-        params.put("actionName", "getData");
-        params.put("userId", GlobalData.userID);
-
-        AsynClient.post(MyHttpConfing.getProductData, ProductListActivity.this, params, new GsonHttpResponseHandler() {
-            @Override
-            protected Object parseResponse(String rawJsonData) throws Throwable {
-                return null;
-            }
-
-            @Override
-            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                Log.e("rawJsonData======",""+rawJsonData);
-            }
-
-            @Override
-            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                Log.e("rawJsonResponse======",""+rawJsonResponse);
-
-                Gson gson = new Gson();
-                ReturnCategoryAndProductEntity rcapEntity = gson.fromJson(rawJsonResponse, ReturnCategoryAndProductEntity.class);
-                if (rcapEntity.getCode() == 0) {
-                    mData = rcapEntity.getData();
-                    productAdapter = new ProductAdapter(ProductListActivity.this,mData);
-                    productLV.setAdapter(productAdapter);
-                }
-                else{
-                    showMessage(rcapEntity.getMessage());
-                }
-            }
-        });
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +54,9 @@ public class ProductListActivity extends BaseActivity {
 
     @Override
     protected void initLogic() {
-        initData();
+        productAdapter = new ProductAdapter(ProductListActivity.this);
+        productAdapter.setNewData();
+        productLV.setAdapter(productAdapter);
     }
 
     @Override
@@ -105,9 +74,15 @@ public class ProductListActivity extends BaseActivity {
         return R.layout.activity_product_list;
     }
 
-    @OnClick({R.id.act_but})
+    @OnClick({R.id.on_but,R.id.off_but,R.id.act_but})
     public void onViewClicked(View v) {
         switch (v.getId()){
+            case R.id.on_but:
+                productAdapter.takeOn();
+                break;
+            case R.id.off_but:
+                productAdapter.takeOff();
+                break;
             case R.id.act_but:
                 if(onBut.getVisibility()==Button.INVISIBLE)
                     onBut.setVisibility(Button.VISIBLE);

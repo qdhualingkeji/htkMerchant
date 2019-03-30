@@ -18,6 +18,16 @@ public class TakeoutProduct {
         this.showCB = showCB;
     }
 
+    private boolean checkedCB;
+
+    public boolean isCheckedCB() {
+        return checkedCB;
+    }
+
+    public void setCheckedCB(boolean checkedCB) {
+        this.checkedCB = checkedCB;
+    }
+
     private int mark;
 
     public int getMark() {

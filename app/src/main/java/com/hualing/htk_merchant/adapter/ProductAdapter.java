@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.ProductListActivity;
 import com.hualing.htk_merchant.entity.ReturnCategoryAndProductEntity;
+import com.hualing.htk_merchant.entity.SuccessEntity;
 import com.hualing.htk_merchant.entity.TakeoutProductEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.TakeoutCategory;
@@ -39,9 +41,42 @@ public class ProductAdapter extends SectionedBaseAdapter {
     private ProductListActivity context;
     private List<ReturnCategoryAndProductEntity.DataBean> mData;
 
-    public ProductAdapter(ProductListActivity context, List<ReturnCategoryAndProductEntity.DataBean> mData) {
+    public ProductAdapter(ProductListActivity context) {
         this.context = context;
-        this.mData = mData;
+        this.mData = new ArrayList<ReturnCategoryAndProductEntity.DataBean>();
+    }
+
+    public void setNewData(){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("actionName", "getData");
+        params.put("userId", GlobalData.userID);
+
+        AsynClient.post(MyHttpConfing.getProductData, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                Log.e("rawJsonData======",""+rawJsonData);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                ReturnCategoryAndProductEntity rcapEntity = gson.fromJson(rawJsonResponse, ReturnCategoryAndProductEntity.class);
+                if (rcapEntity.getCode() == 0) {
+                    mData = rcapEntity.getData();
+                    notifyDataSetChanged();
+                }
+                else{
+                    context.showMessage(rcapEntity.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -69,23 +104,30 @@ public class ProductAdapter extends SectionedBaseAdapter {
     }
 
     @Override
-    public View getItemView(int section, int position, View convertView, ViewGroup parent) {
+    public View getItemView(final int section, final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        if(convertView==null){
-            convertView = context.getLayoutInflater().inflate(R.layout.item_product,parent,false);
-            holder = new ViewHolder(convertView);
-            convertView.setTag(holder);
-        }
-        else {
-            holder = (ViewHolder) convertView.getTag();
-        }
+        convertView = context.getLayoutInflater().inflate(R.layout.item_product,parent,false);
+        holder = new ViewHolder(convertView);
+        convertView.setTag(holder);
 
-        TakeoutProduct dataBean = mData.get(section).getTakeoutProductList().get(position);
+        final TakeoutProduct dataBean = mData.get(section).getTakeoutProductList().get(position);
         holder.ifCanBuyTV.setText(dataBean.getIfCanBuy()==1?"已上架":"已下架");
         if(dataBean.isShowCB())
             holder.checkGoodsCB.setVisibility(CheckBox.VISIBLE);
         else
             holder.checkGoodsCB.setVisibility(CheckBox.INVISIBLE);
+
+        if(dataBean.isCheckedCB())
+            holder.checkGoodsCB.setChecked(true);
+        else
+            holder.checkGoodsCB.setChecked(false);
+        holder.checkGoodsCB.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                dataBean.setCheckedCB(b);
+            }
+        });
         String imgUrl = dataBean.getImgUrl();
         //Log.e("imgUrl===",""+imgUrl);
         if(!TextUtils.isEmpty(imgUrl)) {
@@ -119,6 +161,9 @@ public class ProductAdapter extends SectionedBaseAdapter {
         return layout;
     }
 
+    /**
+     * 显示或隐藏复选框
+     */
     public void showCheckGoodsCB(){
         for(int i=0;i<getSectionCount();i++) {
             for(int j=0;j<getCountForSection(i);j++) {
@@ -130,6 +175,112 @@ public class ProductAdapter extends SectionedBaseAdapter {
             }
         }
         notifyDataSetChanged();
+    }
+
+    /**
+     * 批量上架
+     */
+    public void takeOn() {
+        String selectedIds="";
+        for (int i=0;i<mData.size();i++){
+            ReturnCategoryAndProductEntity.DataBean rcapEntity = mData.get(i);
+            List<TakeoutProduct> tpList = rcapEntity.getTakeoutProductList();
+            if(tpList!=null) {
+                for (int j = 0; j < tpList.size(); j++) {
+                    TakeoutProduct takeoutProduct = tpList.get(j);
+                    boolean ifChecked = takeoutProduct.isCheckedCB();
+                    if (ifChecked) {
+                        selectedIds = selectedIds + "," + takeoutProduct.getId();
+                    }
+                }
+            }
+        }
+        //如果没有选中的则什么也不做
+        if(selectedIds=="")
+            return;
+        Log.e("selectedIds===",""+selectedIds);
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("selectedIds", selectedIds.substring(1,selectedIds.length()));
+
+        AsynClient.post(MyHttpConfing.takeOn, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                Log.e("rawJsonData======",""+rawJsonData);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                SuccessEntity successEntity = gson.fromJson(rawJsonResponse, SuccessEntity.class);
+                if (successEntity.getCode() == 0) {
+                    setNewData();
+                    notifyDataSetChanged();
+                }
+                else{
+                    context.showMessage(successEntity.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * 批量下架
+     */
+    public void takeOff() {
+        String selectedIds="";
+        for (int i=0;i<mData.size();i++){
+            ReturnCategoryAndProductEntity.DataBean rcapEntity = mData.get(i);
+            List<TakeoutProduct> tpList = rcapEntity.getTakeoutProductList();
+            if(tpList!=null) {
+                for (int j = 0; j < tpList.size(); j++) {
+                    TakeoutProduct takeoutProduct = tpList.get(j);
+                    boolean ifChecked = takeoutProduct.isCheckedCB();
+                    if (ifChecked) {
+                        selectedIds = selectedIds + "," + takeoutProduct.getId();
+                    }
+                }
+            }
+        }
+        //如果没有选中的则什么也不做
+        if(selectedIds=="")
+            return;
+        Log.e("selectedIds===",""+selectedIds);
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("selectedIds", selectedIds.substring(1,selectedIds.length()));
+
+        AsynClient.post(MyHttpConfing.takeOff, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                Log.e("rawJsonData======",""+rawJsonData);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                SuccessEntity successEntity = gson.fromJson(rawJsonResponse, SuccessEntity.class);
+                if (successEntity.getCode() == 0) {
+                    setNewData();
+                    notifyDataSetChanged();
+                }
+                else{
+                    context.showMessage(successEntity.getMessage());
+                }
+            }
+        });
     }
 
     class ViewHolder {
