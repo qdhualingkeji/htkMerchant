@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    @OnClick({R.id.exit_but,R.id.dot1,R.id.dot2,R.id.dot3})
+    @OnClick({R.id.dot1,R.id.dot2,R.id.dot3,R.id.goProductList_layout,R.id.exit_but})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.dot1:
@@ -123,6 +123,10 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.dot3:
                 mViewPager.setCurrentItem(2);
+                break;
+            case R.id.goProductList_layout:
+                Log.e("11111111","11111111");
+                IntentUtil.openActivity(this, ProductListActivity.class);
                 break;
             case R.id.exit_but:
                 GlobalData.userID = 0;

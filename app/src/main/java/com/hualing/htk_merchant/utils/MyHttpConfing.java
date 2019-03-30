@@ -29,6 +29,8 @@ public class MyHttpConfing {
     public static final String login = merchantAppUrl + "login";
     /*确认收货*/
     public static final String enterReceipt = riderUrl + "enterReceipt";
+    /*获得产品信息*/
+    public static final String getProductData = merchantAppUrl + "takeout/product/getProductData";
 
     /* 用户注册 */
     public static final String registered = baseUrl + "register";

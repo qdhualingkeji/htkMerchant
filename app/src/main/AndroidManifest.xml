@@ -75,6 +75,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.MapTestActivity">
+
             <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -83,6 +84,7 @@
             </intent-filter>
             -->
         </activity>
+        <activity android:name=".activities.ProductListActivity"></activity>
     </application>
 
 </manifest>
