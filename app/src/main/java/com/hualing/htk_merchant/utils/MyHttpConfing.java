@@ -35,6 +35,10 @@ public class MyHttpConfing {
     public static final String takeOn = merchantAppUrl + "takeout/product/takeOn";
     /*商品下架*/
     public static final String takeOff = merchantAppUrl + "takeout/product/takeOff";
+    /*
+    * 前往编辑商品
+    * */
+    public static final String editProduct = merchantAppUrl + "takeout/product/editProduct";
 
     /* 用户注册 */
     public static final String registered = baseUrl + "register";

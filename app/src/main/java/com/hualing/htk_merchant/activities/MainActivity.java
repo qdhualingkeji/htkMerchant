@@ -125,7 +125,6 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(2);
                 break;
             case R.id.goProductList_layout:
-                Log.e("11111111","11111111");
                 IntentUtil.openActivity(this, ProductListActivity.class);
                 break;
             case R.id.exit_but:

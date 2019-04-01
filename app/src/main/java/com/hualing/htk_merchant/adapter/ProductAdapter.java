@@ -2,6 +2,7 @@ package com.hualing.htk_merchant.adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
+import com.hualing.htk_merchant.activities.EditProductActivity;
 import com.hualing.htk_merchant.activities.ProductListActivity;
 import com.hualing.htk_merchant.entity.ReturnCategoryAndProductEntity;
 import com.hualing.htk_merchant.entity.SuccessEntity;
@@ -24,6 +26,7 @@ import com.hualing.htk_merchant.entity.TakeoutProductEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
+import com.hualing.htk_merchant.util.IntentUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -38,6 +41,7 @@ import butterknife.OnClick;
 
 public class ProductAdapter extends SectionedBaseAdapter {
 
+    private static final int RELOAD = 111;
     private ProductListActivity context;
     private List<ReturnCategoryAndProductEntity.DataBean> mData;
 
@@ -140,7 +144,9 @@ public class ProductAdapter extends SectionedBaseAdapter {
         holder.editBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId",dataBean.getId());
+                IntentUtil.openActivityForResult(context, EditProductActivity.class, RELOAD, bundle);
             }
         });
 

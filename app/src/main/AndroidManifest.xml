@@ -84,7 +84,8 @@
             </intent-filter>
             -->
         </activity>
-        <activity android:name=".activities.ProductListActivity"></activity>
+        <activity android:name=".activities.ProductListActivity" />
+        <activity android:name=".activities.EditProductActivity"></activity>
     </application>
 
 </manifest>
