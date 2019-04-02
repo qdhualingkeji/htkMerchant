@@ -1,12 +1,13 @@
 package com.hualing.htk_merchant.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 外卖产品实体类
  */
 
-public class TakeoutProduct {
+public class TakeoutProduct implements Serializable {
 
     private boolean showCB;//是否显示复选框（这个属性是为了方便app端操作特意附加的）
 
