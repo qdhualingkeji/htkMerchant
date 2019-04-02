@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -13,6 +14,7 @@ import android.widget.Spinner;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
+import com.hualing.htk_merchant.adapter.CategoryAdapter;
 import com.hualing.htk_merchant.adapter.ProductPropertyAdapter;
 import com.hualing.htk_merchant.entity.ProductDetailEntity;
 import com.hualing.htk_merchant.entity.ReturnCategoryAndProductEntity;
@@ -27,6 +29,8 @@ import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -37,6 +41,8 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static android.widget.Spinner.*;
 
 public class EditProductActivity extends BaseActivity {
 
@@ -60,6 +66,9 @@ public class EditProductActivity extends BaseActivity {
     GridView propertyGV;
     @BindView(R.id.integral_et)
     EditText integralET;
+    private Integer id;
+    private Integer categoryId;
+    private File imgFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +124,7 @@ public class EditProductActivity extends BaseActivity {
         inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
         initPropertyGV(takeoutProduct.getProperty());
         integralET.setText(String.valueOf(takeoutProduct.getIntegral()));
+        id=takeoutProduct.getId();
     }
 
     private void initPropertyGV(String property) {
@@ -128,14 +138,21 @@ public class EditProductActivity extends BaseActivity {
     }
 
     private void initCategorySpinner(List<TakeoutCategory> categoryList) {
-        List<String> categoryNameList = new ArrayList<>();
-        for (TakeoutCategory tc : categoryList){
-            categoryNameList.add(tc.getCategoryName());
-        }
-        // 为下拉列表定义一个适配器，使用到上面定义的categoryList
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(EditProductActivity.this, android.R.layout.simple_spinner_item, categoryNameList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final CategoryAdapter adapter = new CategoryAdapter(EditProductActivity.this, categoryList);
         categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                TakeoutCategory tc = (TakeoutCategory)adapter.getItem(i);
+                categoryId=tc.getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     @OnClick({R.id.save_but,R.id.cancel_but})
@@ -146,6 +163,8 @@ public class EditProductActivity extends BaseActivity {
                     saveProduct();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 break;
             case R.id.cancel_but:
@@ -154,12 +173,11 @@ public class EditProductActivity extends BaseActivity {
         }
     }
 
-    private void saveProduct() throws FileNotFoundException {
+    private void saveProduct() throws FileNotFoundException, JSONException {
         RequestParams params = AsynClient.getRequestParams();
-        TakeoutProduct tp = new TakeoutProduct();
-        tp.setProductName("pppppppp");
-        //params.put("takeoutProduct", tp);
-        params.put("avaImgFile", new File("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg"));
+        params.put("takeoutProductJOStr", initProductParamsJOStr());
+        params.put("takeoutProductPropertyJAStr",initProductPropertyJAStr());
+        params.put("imgFile", new File("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg"));
 
         AsynClient.post(MyHttpConfing.saveProduct, EditProductActivity.this, params, new GsonHttpResponseHandler() {
             @Override
@@ -178,6 +196,25 @@ public class EditProductActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private String initProductPropertyJAStr(){
+        JSONArray ja = new JSONArray();
+        return ja.toString();
+    }
+
+    private String initProductParamsJOStr() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("productName",productNameET.getText().toString());
+        jo.put("categoryId",categoryId);
+        jo.put("description  ",descriptionET.getText().toString());
+        jo.put("price",priceET.getText().toString());
+        jo.put("priceCanhe",priceCanheET.getText().toString());
+        jo.put("inventory",inventoryET.getText().toString());
+        jo.put("inventoryCount",inventoryCountET.getText().toString());
+        jo.put("integral",integralET.getText().toString());
+        jo.put("id",id);
+        return jo.toString();
     }
 
     @Override
