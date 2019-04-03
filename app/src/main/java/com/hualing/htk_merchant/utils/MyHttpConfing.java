@@ -37,10 +37,16 @@ public class MyHttpConfing {
     public static final String takeOff = merchantAppUrl + "takeout/product/takeOff";
     /*编辑商品*/
     public static final String saveProduct = merchantAppUrl + "takeout/product/saveProduct";
+    /*添加商品*/
+    public static final String addProduct = merchantAppUrl + "takeout/product/addProduct";
     /*
     * 前往编辑商品
     * */
     public static final String editProduct = merchantAppUrl + "takeout/product/editProduct";
+    /**
+     *根据用户id查询类别
+     */
+    public static final String getCategoryListById = merchantAppUrl + "takeout/getCategoryListById";
 
     /* 用户注册 */
     public static final String registered = baseUrl + "register";

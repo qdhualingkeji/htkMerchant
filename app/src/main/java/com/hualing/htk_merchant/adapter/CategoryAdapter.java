@@ -6,7 +6,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.hualing.htk_merchant.R;
-import com.hualing.htk_merchant.activities.EditProductActivity;
+import com.hualing.htk_merchant.activities.BaseActivity;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 
 import java.util.List;
@@ -17,9 +17,9 @@ import butterknife.ButterKnife;
 public class CategoryAdapter extends BaseAdapter {
 
     private List<TakeoutCategory> mData;
-    private EditProductActivity context;
+    private BaseActivity context;
 
-    public CategoryAdapter(EditProductActivity context,List<TakeoutCategory> mData){
+    public CategoryAdapter(BaseActivity context,List<TakeoutCategory> mData){
         this.context=context;
         this.mData=mData;
     }

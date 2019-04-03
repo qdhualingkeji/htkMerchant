@@ -1,12 +1,10 @@
 package com.hualing.htk_merchant.activities;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
@@ -15,15 +13,12 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.adapter.CategoryAdapter;
-import com.hualing.htk_merchant.adapter.ProductPropertyAdapter;
+import com.hualing.htk_merchant.adapter.EditProductPropertyAdapter;
 import com.hualing.htk_merchant.entity.ProductDetailEntity;
-import com.hualing.htk_merchant.entity.ReturnCategoryAndProductEntity;
-import com.hualing.htk_merchant.entity.TakeoutProductEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
-import com.hualing.htk_merchant.util.IntentUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -37,12 +32,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static android.widget.Spinner.*;
 
 public class EditProductActivity extends BaseActivity {
 
@@ -62,6 +54,7 @@ public class EditProductActivity extends BaseActivity {
     EditText inventoryET;
     @BindView(R.id.inventoryCount_et)
     EditText inventoryCountET;
+    private List<String> propertyList;
     @BindView(R.id.property_gv)
     GridView propertyGV;
     @BindView(R.id.integral_et)
@@ -129,11 +122,11 @@ public class EditProductActivity extends BaseActivity {
 
     private void initPropertyGV(String property) {
         String[] propertyArr = property.split(",");
-        List<String> propertyList = new ArrayList<>();
+        propertyList = new ArrayList<>();
         for (String pro : propertyArr){
             propertyList.add(pro);
         }
-        ProductPropertyAdapter adapter = new ProductPropertyAdapter(EditProductActivity.this, propertyList);
+        EditProductPropertyAdapter adapter = new EditProductPropertyAdapter(EditProductActivity.this, propertyList);
         propertyGV.setAdapter(adapter);
     }
 
@@ -198,8 +191,14 @@ public class EditProductActivity extends BaseActivity {
         });
     }
 
-    private String initProductPropertyJAStr(){
+    private String initProductPropertyJAStr() throws JSONException {
         JSONArray ja = new JSONArray();
+        propertyList.size();
+        for(String property : propertyList){
+            JSONObject jo = new JSONObject();
+            jo.put("propertyE",property);
+            ja.put(jo);
+        }
         return ja.toString();
     }
 

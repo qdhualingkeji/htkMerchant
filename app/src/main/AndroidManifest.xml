@@ -87,6 +87,7 @@
         <activity android:name=".activities.ProductListActivity" />
         <activity android:name=".activities.EditProductActivity" />
         <activity android:name=".activities.UploadPhoneActivity">
+
             <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -95,6 +96,7 @@
             </intent-filter>
             -->
         </activity>
+        <activity android:name=".activities.AddProductActivity"></activity>
     </application>
 
 </manifest>

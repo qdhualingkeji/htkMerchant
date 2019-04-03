@@ -13,12 +13,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProductPropertyAdapter extends BaseAdapter {
+public class EditProductPropertyAdapter extends BaseAdapter {
 
     private List<String> mData;
     private EditProductActivity context;
 
-    public ProductPropertyAdapter(EditProductActivity context,List<String> mData){
+    public EditProductPropertyAdapter(EditProductActivity context, List<String> mData){
         this.context=context;
         this.mData=mData;
     }
@@ -42,7 +42,7 @@ public class ProductPropertyAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if(convertView==null){
-            convertView = context.getLayoutInflater().inflate(R.layout.item_product_property,parent,false);
+            convertView = context.getLayoutInflater().inflate(R.layout.item_edit_product_property,parent,false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
