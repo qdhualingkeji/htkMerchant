@@ -6,16 +6,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -24,11 +24,14 @@ import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.adapter.AddProductPropertyAdapter;
 import com.hualing.htk_merchant.adapter.CategoryAdapter;
 import com.hualing.htk_merchant.adapter.PriceInventoryAdapter;
+import com.hualing.htk_merchant.entity.LoginUserEntity;
 import com.hualing.htk_merchant.entity.TakeoutCategoryEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
 import com.hualing.htk_merchant.util.ImageUtil;
+import com.hualing.htk_merchant.util.IntentUtil;
+import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -50,6 +53,7 @@ public class AddProductActivity extends BaseActivity {
 
     @BindView(R.id.productName_et)
     EditText productNameET;
+    private CategoryAdapter categoryAdapter;
     @BindView(R.id.category_spinner)
     Spinner categorySpinner;
     @BindView(R.id.imgUrl_sdv)
@@ -72,7 +76,6 @@ public class AddProductActivity extends BaseActivity {
     public Button addProBut;
     private Integer categoryId;
     private String tempPhotoPath;
-    private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,88 @@ public class AddProductActivity extends BaseActivity {
 
     @Override
     protected void initLogic() {
+
+        if(GlobalData.userID==null){
+            toLogin();
+        }
+        else{
+            initData();
+        }
+    }
+
+    private void initProductData() {
+        try {
+            String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
+            Log.e("productParamsJOStr===",""+productParamsJOStr);
+            JSONObject productJO = new JSONObject(productParamsJOStr);
+                productNameET.setText(productJO.getString("productName"));
+            categoryId= productJO.getInt("categoryId");
+            for (int i=0;i<categoryAdapter.getCount();i++) {
+                TakeoutCategory tc = (TakeoutCategory) categoryAdapter.getItem(i);
+                if(tc.getId()==categoryId){
+                    categorySpinner.setSelection(i);
+                    break;
+                }
+            }
+            descriptionET.setText(productJO.getString("description"));
+            integralET.setText(String.valueOf(productJO.getInt("integral")));
+
+            tempPhotoPath=getIntent().getStringExtra("tempPhotoPath");
+            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
+            imgUrlSDV.setImageBitmap(bm);
+            imgUrlSDV.setTag(tempPhotoPath);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void toLogin(){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
+        params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);
+
+        AsynClient.post(MyHttpConfing.login, this, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                LoginUserEntity loginUserEntity = gson.fromJson(rawJsonResponse, LoginUserEntity.class);
+                if (loginUserEntity.getCode() == 100) {
+                    LoginUserEntity.DataBean loginUserData = loginUserEntity.getData();
+                    GlobalData.userID = loginUserData.getUserId();
+                    GlobalData.userName = loginUserData.getUserName();
+                    GlobalData.password = loginUserData.getPassword();
+                    GlobalData.avatarImg = loginUserData.getAvatarImg();
+                    GlobalData.shopName = loginUserData.getShopName();
+                    GlobalData.state = loginUserData.getState();
+
+                    initData();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            initProductData();
+                        }
+                    },3000);
+                }
+                else {
+                    showMessage(loginUserEntity.getMessage());
+                }
+            }
+        });
+    }
+
+    private void initData(){
         initCategorySpinner();
         initPriceInventory();
         initPropertyGV();
@@ -131,13 +216,13 @@ public class AddProductActivity extends BaseActivity {
                         category.setCategoryName(tc.getCategoryName());
                         categoryList.add(category);
                     }
-                    final CategoryAdapter adapter = new CategoryAdapter(AddProductActivity.this, categoryList);
-                    categorySpinner.setAdapter(adapter);
+                    categoryAdapter = new CategoryAdapter(AddProductActivity.this, categoryList);
+                    categorySpinner.setAdapter(categoryAdapter);
                     categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            TakeoutCategory tc = (TakeoutCategory)adapter.getItem(i);
+                            TakeoutCategory tc = (TakeoutCategory)categoryAdapter.getItem(i);
                             categoryId=tc.getId();
                         }
 
@@ -179,7 +264,15 @@ public class AddProductActivity extends BaseActivity {
                 addProperty();
                 break;
             case R.id.imgUrl_sdv:
-                uploadPhoto();
+                //uploadPhoto();
+                try {
+                    Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
+                    intent.putExtra("productParamsJOStr", initProductParamsJOStr());
+                    startActivity(intent);
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.save_but:
                 try {
@@ -193,70 +286,7 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
-    private void uploadPhoto() {
-        String[] items={"从相册上传","拍照上传"};
-        new AlertDialog.Builder(AddProductActivity.this)
-                .setTitle("请选择上传方式")
-                .setSingleChoiceItems(items, 0, uploadTypeOnClick)
-                .setPositiveButton("确定", uploadTypeOnClick)
-                .setNegativeButton("取消", uploadTypeOnClick)
-                .show();
-    }
-
-    /**
-     * 选择上传图片方式的监听类
-     * **/
-    class UploadTypeOnClick implements DialogInterface.OnClickListener{
-        private int index;
-        public UploadTypeOnClick(int index){
-            this.index=index;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            // TODO Auto-generated method stub
-            if(which>=0)
-                index=which;
-            else if(which==DialogInterface.BUTTON_POSITIVE){
-                switch (index) {
-                    case ImageUtil.FROMALBUM:
-                        uploadFromAlbum();
-                        index=0;
-                        break;
-                    case ImageUtil.FROMTAKE:
-                        uploadFromTake();
-                        index=0;
-                        break;
-                }
-            }
-            else if(which==DialogInterface.BUTTON_NEGATIVE)
-                showMessage("你选择了取消操作");
-        }
-
-    }
-
-    /**
-     * 从相册上传
-     * **/
-    public void uploadFromAlbum() {
-        // TODO Auto-generated method stub
-        Intent intent=new Intent();
-        intent.setType("image/");
-        intent.setAction(intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, ImageUtil.FROMALBUM);
-    }
-
-    /**
-     * 拍照上传
-     * **/
-    public void uploadFromTake() {
-        // TODO Auto-generated method stub
-        //下面是调用系统的照相机拍照
-        Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //启动拍照设备，等待处理拍照结果
-        startActivityForResult(intent,  ImageUtil.FROMTAKE);
-    }
-
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -269,39 +299,9 @@ public class AddProductActivity extends BaseActivity {
             Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
             imgUrlSDV.setImageBitmap(bm);
             imgUrlSDV.setTag(tempPhotoPath);
-            /*
-            switch (photoCount) {
-                case 0:
-                    course.setCPhoto(tempPhotoPath);
-                    //photoIV1.setImageBitmap(bm);
-                    //photoIV1.setTag(tempPhotoPath);
-                    break;
-                case 1:
-                    course.setCPhoto2(tempPhotoPath);
-                    //photoIV2.setImageBitmap(bm);
-                    //photoIV2.setTag(tempPhotoPath);
-                    break;
-                case 2:
-                    course.setCPhoto3(tempPhotoPath);
-                    //photoIV3.setImageBitmap(bm);
-                    //photoIV3.setTag(tempPhotoPath);
-                    break;
-                case 3:
-                    course.setCPhoto4(tempPhotoPath);
-                    break;
-                case 4:
-                    course.setCPhoto5(tempPhotoPath);
-                    break;
-            }
-            photoCount++;
-            Intent intent=new Intent(UploadPhotoActivity.this, AddCourseActivity.class);
-            intent.putExtra("photoCount", photoCount);
-            intent.putExtra("course", course);
-            startActivity(intent);
-            finish();
-            */
         }
     }
+    */
 
     private void addProduct() throws JSONException, FileNotFoundException {
         RequestParams params = AsynClient.getRequestParams();
@@ -360,8 +360,9 @@ public class AddProductActivity extends BaseActivity {
         JSONObject jo = new JSONObject();
         jo.put("productName",productNameET.getText().toString());
         jo.put("categoryId",categoryId);
-        jo.put("description  ",descriptionET.getText().toString());
-        jo.put("integral",integralET.getText().toString());
+        jo.put("description",descriptionET.getText().toString());
+        String integralStr = integralET.getText().toString();
+        jo.put("integral",Integer.valueOf(TextUtils.isEmpty(integralStr)?"0":integralStr));
         jo.put("time","all,");//全时段售卖
         return jo.toString();
     }
@@ -388,4 +389,5 @@ public class AddProductActivity extends BaseActivity {
             addGGBut.setVisibility(Button.GONE);
         }
     }
+
 }

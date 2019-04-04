@@ -1,7 +1,13 @@
 package com.hualing.htk_merchant.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,11 +20,14 @@ import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.adapter.CategoryAdapter;
 import com.hualing.htk_merchant.adapter.EditProductPropertyAdapter;
+import com.hualing.htk_merchant.entity.LoginUserEntity;
 import com.hualing.htk_merchant.entity.ProductDetailEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
+import com.hualing.htk_merchant.util.ImageUtil;
+import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -62,6 +71,8 @@ public class EditProductActivity extends BaseActivity {
     private Integer id;
     private Integer categoryId;
     private File imgFile;
+    private String tempPhotoPath;
+    private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +81,57 @@ public class EditProductActivity extends BaseActivity {
 
     @Override
     protected void initLogic() {
+        if(GlobalData.userID==null){
+            toLogin();
+        }
+        else{
+            initData();
+        }
+    }
+
+    private void toLogin(){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
+        params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);
+
+        AsynClient.post(MyHttpConfing.login, this, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                LoginUserEntity loginUserEntity = gson.fromJson(rawJsonResponse, LoginUserEntity.class);
+                if (loginUserEntity.getCode() == 100) {
+                    LoginUserEntity.DataBean loginUserData = loginUserEntity.getData();
+                    GlobalData.userID = loginUserData.getUserId();
+                    GlobalData.userName = loginUserData.getUserName();
+                    GlobalData.password = loginUserData.getPassword();
+                    GlobalData.avatarImg = loginUserData.getAvatarImg();
+                    GlobalData.shopName = loginUserData.getShopName();
+                    GlobalData.state = loginUserData.getState();
+
+                    initData();
+                }
+                else {
+                    showMessage(loginUserEntity.getMessage());
+                }
+            }
+        });
+    }
+
+    private void initData() {
         int productId = getIntent().getIntExtra("productId", 0);
-        
+
         RequestParams params = AsynClient.getRequestParams();
         params.put("userId", GlobalData.userID);
         params.put("productId", productId);
@@ -95,29 +155,25 @@ public class EditProductActivity extends BaseActivity {
                 ProductDetailEntity productDetailEntity = gson.fromJson(rawJsonResponse, ProductDetailEntity.class);
                 if (productDetailEntity.getCode() == 100) {
                     ProductDetailEntity.ProductDetail productDetail = productDetailEntity.getData();
-                    initData(productDetail);
+                    TakeoutProduct takeoutProduct = productDetail.getDataPro();
+                    productNameET.setText(takeoutProduct.getProductName());
+                    initCategorySpinner(productDetail.getData());
+                    Uri uri = Uri.parse(takeoutProduct.getImgUrl());
+                    imgUrlSDV.setImageURI(uri);
+                    descriptionET.setText(takeoutProduct.getDescription());
+                    priceET.setText("￥"+takeoutProduct.getPrice());
+                    priceCanheET.setText("￥"+takeoutProduct.getPriceCanhe());
+                    inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
+                    inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
+                    initPropertyGV(takeoutProduct.getProperty());
+                    integralET.setText(String.valueOf(takeoutProduct.getIntegral()));
+                    id=takeoutProduct.getId();
                 }
                 else{
                     showMessage(productDetailEntity.getMessage());
                 }
             }
         });
-    }
-
-    private void initData(ProductDetailEntity.ProductDetail productDetail) {
-        TakeoutProduct takeoutProduct = productDetail.getDataPro();
-        productNameET.setText(takeoutProduct.getProductName());
-        initCategorySpinner(productDetail.getData());
-        Uri uri = Uri.parse(takeoutProduct.getImgUrl());
-        imgUrlSDV.setImageURI(uri);
-        descriptionET.setText(takeoutProduct.getDescription());
-        priceET.setText("￥"+takeoutProduct.getPrice());
-        priceCanheET.setText("￥"+takeoutProduct.getPriceCanhe());
-        inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
-        inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
-        initPropertyGV(takeoutProduct.getProperty());
-        integralET.setText(String.valueOf(takeoutProduct.getIntegral()));
-        id=takeoutProduct.getId();
     }
 
     private void initPropertyGV(String property) {
@@ -148,9 +204,12 @@ public class EditProductActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.save_but,R.id.cancel_but})
+    @OnClick({R.id.imgUrl_sdv,R.id.save_but,R.id.cancel_but})
     public void onViewClicked(View v) {
         switch (v.getId()){
+            case R.id.imgUrl_sdv:
+                uploadPhoto();
+                break;
             case R.id.save_but:
                 try {
                     saveProduct();
@@ -166,11 +225,89 @@ public class EditProductActivity extends BaseActivity {
         }
     }
 
+    private void uploadPhoto() {
+        String[] items={"从相册上传","拍照上传"};
+        new AlertDialog.Builder(EditProductActivity.this)
+                .setTitle("请选择上传方式")
+                .setSingleChoiceItems(items,0,uploadTypeOnClick)
+                .setPositiveButton("确定", uploadTypeOnClick)
+                .setNegativeButton("取消", uploadTypeOnClick)
+                .show();
+    }
+
+    /**
+     * 选择上传图片方式的监听类
+     * **/
+    class UploadTypeOnClick implements DialogInterface.OnClickListener{
+        private int index;
+        public UploadTypeOnClick(int index){
+            this.index=index;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            // TODO Auto-generated method stub
+            if(which>=0)
+                index=which;
+            else if(which==DialogInterface.BUTTON_POSITIVE){
+                switch (index) {
+                    case ImageUtil.FROMALBUM:
+                        uploadFromAlbum();
+                        index=0;
+                        break;
+                    case ImageUtil.FROMTAKE:
+                        uploadFromTake();
+                        index=0;
+                        break;
+                }
+            }
+            else if(which==DialogInterface.BUTTON_NEGATIVE)
+                showMessage("你选择了取消操作");
+        }
+    }
+
+    /**
+     * 从相册上传
+     * **/
+    public void uploadFromAlbum() {
+        // TODO Auto-generated method stub
+        Intent intent=new Intent();
+        intent.setType("image/");
+        intent.setAction(intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, ImageUtil.FROMALBUM);
+    }
+
+    /**
+     * 拍照上传
+     * **/
+    public void uploadFromTake() {
+        // TODO Auto-generated method stub
+        //下面是调用系统的照相机拍照
+        Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //启动拍照设备，等待处理拍照结果
+        startActivityForResult(intent,  ImageUtil.FROMTAKE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //拍摄图片返回情况
+        if(resultCode==RESULT_OK){
+            if(requestCode==ImageUtil.FROMALBUM)
+                tempPhotoPath=ImageUtil.getPhotoPath(data,EditProductActivity.this,ImageUtil.FROMALBUM);
+            else if(requestCode==ImageUtil.FROMTAKE)
+                tempPhotoPath=ImageUtil.getPhotoPath(data,EditProductActivity.this,ImageUtil.FROMTAKE);
+            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
+            imgUrlSDV.setImageBitmap(bm);
+            imgUrlSDV.setTag(tempPhotoPath);
+        }
+    }
+
     private void saveProduct() throws FileNotFoundException, JSONException {
         RequestParams params = AsynClient.getRequestParams();
         params.put("takeoutProductJOStr", initProductParamsJOStr());
         params.put("takeoutProductPropertyJAStr",initProductPropertyJAStr());
-        params.put("imgFile", new File("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg"));
+        params.put("imgFile", new File(imgUrlSDV.getTag().toString()));
 
         AsynClient.post(MyHttpConfing.saveProduct, EditProductActivity.this, params, new GsonHttpResponseHandler() {
             @Override

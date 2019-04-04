@@ -86,7 +86,7 @@
         </activity>
         <activity android:name=".activities.ProductListActivity" />
         <activity android:name=".activities.EditProductActivity" />
-        <activity android:name=".activities.UploadPhoneActivity">
+        <activity android:name=".activities.UploadPhotoActivity">
 
             <!--
             <intent-filter>
