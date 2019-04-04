@@ -1,9 +1,14 @@
 package com.hualing.htk_merchant.util;
 
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
-
-//import com.dgsrcmgsys.util.MyIPUtil;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -22,17 +27,22 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class UploadPhoneUtil {
+public class ImageUtil {
 
     private final int UP_PORT = 21;
     private final int DOWN_PORT = 65;
     private final String USERNAME = "htk";
     private final String PASSWORD = "123456";
     private final String ADRESS = "120.27.5.36";
+    /**
+     * 上传图片方式
+     * **/
+    public static final int FROMALBUM=0;//选择从相册上传
+    public static final int FROMTAKE=1;//选择拍照上传
 
     private FutureTask<Boolean> uploadTask;
 
-    public UploadPhoneUtil(){
+    public ImageUtil(){
 
     }
 
@@ -47,7 +57,7 @@ public class UploadPhoneUtil {
      * @param input 输入流
      * @return 成功返回true，否则返回false
      */
-    private boolean uploadFile(String hostname, int port, String username,
+    private boolean uploadFileToFTP(String hostname, int port, String username,
                                String password, String folder, String filename, InputStream input) {
         boolean success = false;
         FTPClient ftp = new FTPClient();
@@ -93,7 +103,7 @@ public class UploadPhoneUtil {
                 public Boolean call() throws Exception {
                     if (!Thread.currentThread().isInterrupted()){
                         Log.e("1111111","111111111");
-                        return uploadFile(ADRESS, UP_PORT, USERNAME, PASSWORD,
+                        return uploadFileToFTP(ADRESS, UP_PORT, USERNAME, PASSWORD,
                                 folder,filename, in);
                     }
                     Log.e("2222222","222222222");
@@ -220,4 +230,39 @@ public class UploadPhoneUtil {
 
         return sdcard_path;
     }
+
+    public static String getPhotoPath(Intent data, Activity activity, int requestCode) {
+        // TODO Auto-generated method stub
+        String path=null;
+        try {
+            ContentResolver resolver = activity.getContentResolver();
+            File tempPhoto=new File(Environment.getExternalStorageDirectory()+"/PhotosTemp", "tempPhoto.jpg");
+            Uri originalUri=null;
+            if(requestCode==FROMALBUM)
+                originalUri = data.getData(); //获得图片的uri
+            else if(requestCode==FROMTAKE)
+                originalUri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(activity.getContentResolver(), tempPhoto.getAbsolutePath(), null, null));
+            Bitmap bm = MediaStore.Images.Media.getBitmap(resolver, originalUri); //显得到bitmap图片
+            // 这里开始的第二部分，获取图片的路径：
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = activity.managedQuery(originalUri, proj, null, null, null);
+            //按我个人理解 这个是获得用户选择的图片的索引值
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            //最后根据索引值获取图片路径
+            path = cursor.getString(column_index);
+            Log.e("Lostinai====",path);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return path;
+    }
+
 }

@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.hualing.htk_merchant.R;
-import com.hualing.htk_merchant.util.UploadPhoneUtil;
-
-import java.io.File;
+import com.hualing.htk_merchant.util.ImageUtil;
 
 public class UploadPhoneActivity extends BaseActivity {
 
@@ -17,7 +15,7 @@ public class UploadPhoneActivity extends BaseActivity {
 
     @Override
     protected void initLogic() {
-        UploadPhoneUtil upload = new UploadPhoneUtil();
+        ImageUtil upload = new ImageUtil();
         //File file = new File("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg");
         boolean bool = upload.upLoading("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg", "D:/Resource/htkApp/upload/shop/takeout/", "aaaaa.jpg");
         Log.e("bool===",""+bool);
