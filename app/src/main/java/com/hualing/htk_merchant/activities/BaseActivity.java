@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hualing.htk_merchant.R;
@@ -63,9 +64,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected void showLoadingDialog(BaseActivity activity) {
+    protected void showLoadingDialog(BaseActivity activity,String message) {
         loadingDialog = new Dialog(activity);
         loadingDialog.setContentView(R.layout.progress_bar_loading);
+        TextView loadingMsgTv = (TextView) loadingDialog.findViewById(R.id.loading_msg_tv);
+        loadingMsgTv.setText(message);
         loadingDialog.show();
     }
 

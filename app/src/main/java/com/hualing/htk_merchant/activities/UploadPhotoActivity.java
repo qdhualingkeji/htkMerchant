@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +19,6 @@ import butterknife.OnClick;
 
 public class UploadPhotoActivity extends BaseActivity {
 
-    private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
     private String productParamsJOStr;
     private String productParamsJAStr;
     private String productPropertyJAStr;
@@ -37,7 +37,16 @@ public class UploadPhotoActivity extends BaseActivity {
         boolean bool = upload.upLoading("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg", "D:/Resource/htkApp/upload/shop/takeout/", "aaaaa.jpg");
         Log.e("bool===",""+bool);
         */
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int fromFlag = getIntent().getIntExtra("fromFlag", 0);
+                if(fromFlag==ImageUtil.FROMALBUM)
+                    uploadFromAlbum();
+                else if(fromFlag==ImageUtil.FROMTAKE)
+                    uploadFromTake();
+            }
+        },1000);
     }
 
     @Override
@@ -53,57 +62,6 @@ public class UploadPhotoActivity extends BaseActivity {
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_upload_phone;
-    }
-
-    @OnClick({R.id.uploadPhoto_but})
-    public void onViewClicked(View v){
-        switch (v.getId()){
-            case R.id.uploadPhoto_but:
-                uploadPhoto();
-                break;
-        }
-    }
-
-    private void uploadPhoto() {
-        String[] items={"从相册上传","拍照上传"};
-        new AlertDialog.Builder(UploadPhotoActivity.this)
-                .setTitle("请选择上传方式")
-                .setSingleChoiceItems(items, 0, uploadTypeOnClick)
-                .setPositiveButton("确定", uploadTypeOnClick)
-                .setNegativeButton("取消", uploadTypeOnClick)
-                .show();
-    }
-
-    /**
-     * 选择上传图片方式的监听类
-     * **/
-    class UploadTypeOnClick implements DialogInterface.OnClickListener{
-        private int index;
-        public UploadTypeOnClick(int index){
-            this.index=index;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            // TODO Auto-generated method stub
-            if(which>=0)
-                index=which;
-            else if(which==DialogInterface.BUTTON_POSITIVE){
-                switch (index) {
-                    case ImageUtil.FROMALBUM:
-                        uploadFromAlbum();
-                        index=0;
-                        break;
-                    case ImageUtil.FROMTAKE:
-                        uploadFromTake();
-                        index=0;
-                        break;
-                }
-            }
-            else if(which==DialogInterface.BUTTON_NEGATIVE)
-                showMessage("你选择了取消操作");
-        }
-
     }
 
     /**

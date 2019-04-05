@@ -81,6 +81,7 @@ public class AddProductActivity extends BaseActivity {
     private Integer categoryId;
     private String tempPhotoPath;
     private boolean reload;
+    private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class AddProductActivity extends BaseActivity {
 
         if(reload) {
             Log.e("bbbbbbbb", "bbbbbbbbbb");
-            showLoadingDialog(AddProductActivity.this);
+            showLoadingDialog(AddProductActivity.this,"加载中");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -305,6 +306,8 @@ public class AddProductActivity extends BaseActivity {
                 addProperty();
                 break;
             case R.id.imgUrl_sdv:
+                uploadPhoto();
+                /*
                 try {
                     Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
                     intent.putExtra("productParamsJOStr", initProductParamsJOStr());
@@ -315,6 +318,7 @@ public class AddProductActivity extends BaseActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                */
                 break;
             case R.id.save_but:
                 try {
@@ -326,6 +330,51 @@ public class AddProductActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+
+    private void uploadPhoto() {
+        String[] items={"从相册上传","拍照上传"};
+        new AlertDialog.Builder(AddProductActivity.this)
+                .setTitle("请选择上传方式")
+                .setSingleChoiceItems(items, 0, uploadTypeOnClick)
+                .setPositiveButton("确定", uploadTypeOnClick)
+                .setNegativeButton("取消", uploadTypeOnClick)
+                .show();
+    }
+
+    /**
+     * 选择上传图片方式的监听类
+     * **/
+    class UploadTypeOnClick implements DialogInterface.OnClickListener{
+        private int index;
+        public UploadTypeOnClick(int index){
+            this.index=index;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            // TODO Auto-generated method stub
+            if(which>=0)
+                index=which;
+            else if(which==DialogInterface.BUTTON_POSITIVE){
+                try {
+                    Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
+                    intent.putExtra("productParamsJOStr", initProductParamsJOStr());
+                    intent.putExtra("productParamsJAStr", initProductParamsJAStr());
+                    intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
+                    intent.putExtra("fromFlag",index);
+                    startActivity(intent);
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                index=0;
+            }
+            else if(which==DialogInterface.BUTTON_NEGATIVE)
+                showMessage("你选择了取消操作");
+        }
+
     }
 
     /*
@@ -355,6 +404,7 @@ public class AddProductActivity extends BaseActivity {
         params.put("imgFile", new File(imgUrlSDV.getTag().toString()));
         params.put("userId", GlobalData.userID);
 
+        showLoadingDialog(AddProductActivity.this,"上传中");
         AsynClient.post(MyHttpConfing.addProduct, AddProductActivity.this, params, new GsonHttpResponseHandler() {
             @Override
             protected Object parseResponse(String rawJsonData) throws Throwable {
@@ -364,6 +414,7 @@ public class AddProductActivity extends BaseActivity {
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
                 Log.e("rawJsonData======",""+rawJsonData);
+                hideLoadingDialog();
             }
 
             @Override
@@ -378,6 +429,7 @@ public class AddProductActivity extends BaseActivity {
                     Intent intent = new Intent(AddProductActivity.this, MainActivity.class);
                     startActivity(intent);
                     AllActivitiesHolder.removeAct(AddProductActivity.this);
+                    hideLoadingDialog();
                 }
             }
         });

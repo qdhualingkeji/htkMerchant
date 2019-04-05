@@ -1,6 +1,7 @@
 package com.hualing.htk_merchant.adapter;
 
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -139,7 +140,8 @@ public class PriceInventoryAdapter extends BaseAdapter {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                takeoutProduct.setInventory(Integer.valueOf(inventoryET.getText().toString()));
+                String inventoryStr = inventoryET.getText().toString();
+                takeoutProduct.setInventory(Integer.valueOf(TextUtils.isEmpty(inventoryStr)?"0":inventoryStr));
                 notifyDataSetChanged();
             }
         });
@@ -158,7 +160,8 @@ public class PriceInventoryAdapter extends BaseAdapter {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                takeoutProduct.setInventoryCount(Integer.valueOf(inventoryCountET.getText().toString()));
+                String inventoryCountStr = inventoryCountET.getText().toString();
+                takeoutProduct.setInventoryCount(Integer.valueOf(TextUtils.isEmpty(inventoryCountStr)?"0":inventoryCountStr));
                 notifyDataSetChanged();
             }
         });
