@@ -112,7 +112,6 @@ public class AddProductActivity extends BaseActivity {
         }
     }
 
-
     private void initProductData() {
         try {
             String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
@@ -363,7 +362,8 @@ public class AddProductActivity extends BaseActivity {
                     intent.putExtra("productParamsJOStr", initProductParamsJOStr());
                     intent.putExtra("productParamsJAStr", initProductParamsJAStr());
                     intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
-                    intent.putExtra("fromFlag",index);
+                    intent.putExtra("activityFrom",ImageUtil.ADDFROM);
+                    intent.putExtra("uploadFrom",index);
                     startActivity(intent);
                     finish();
                 } catch (JSONException e) {
@@ -426,7 +426,7 @@ public class AddProductActivity extends BaseActivity {
                 if (successEntity.getCode() == 100){
                     showMessage(successEntity.getMessage());
 
-                    Intent intent = new Intent(AddProductActivity.this, MainActivity.class);
+                    Intent intent = new Intent(AddProductActivity.this, ProductListActivity.class);
                     startActivity(intent);
                     AllActivitiesHolder.removeAct(AddProductActivity.this);
                     hideLoadingDialog();

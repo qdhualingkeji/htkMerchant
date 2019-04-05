@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,7 +24,9 @@ import com.hualing.htk_merchant.adapter.CategoryAdapter;
 import com.hualing.htk_merchant.adapter.EditProductPropertyAdapter;
 import com.hualing.htk_merchant.entity.LoginUserEntity;
 import com.hualing.htk_merchant.entity.ProductDetailEntity;
+import com.hualing.htk_merchant.entity.SuccessEntity;
 import com.hualing.htk_merchant.global.GlobalData;
+import com.hualing.htk_merchant.model.ProductProperty;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
@@ -49,6 +53,7 @@ public class EditProductActivity extends BaseActivity {
 
     @BindView(R.id.productName_et)
     EditText productNameET;
+    private CategoryAdapter categoryAdapter;
     @BindView(R.id.category_spinner)
     Spinner categorySpinner;
     @BindView(R.id.imgUrl_sdv)
@@ -63,7 +68,8 @@ public class EditProductActivity extends BaseActivity {
     EditText inventoryET;
     @BindView(R.id.inventoryCount_et)
     EditText inventoryCountET;
-    private List<String> propertyList;
+    private List<ProductProperty> propertyList;
+    private EditProductPropertyAdapter editProductPropertyAdapter;
     @BindView(R.id.property_gv)
     GridView propertyGV;
     @BindView(R.id.integral_et)
@@ -72,6 +78,7 @@ public class EditProductActivity extends BaseActivity {
     private Integer categoryId;
     private File imgFile;
     private String tempPhotoPath;
+    private boolean reload;
     private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
 
     @Override
@@ -86,6 +93,60 @@ public class EditProductActivity extends BaseActivity {
         }
         else{
             initData();
+        }
+
+        reload = getIntent().getBooleanExtra("reload", false);
+        if(reload){
+            showLoadingDialog(EditProductActivity.this,"加载中");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initProductData();
+                }
+            },3000);
+        }
+    }
+
+    private void initProductData() {
+        try {
+            String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
+            JSONObject productJO = new JSONObject(productParamsJOStr);
+            productNameET.setText(productJO.getString("productName"));
+            categoryId= productJO.getInt("categoryId");
+            for (int i=0;i<categoryAdapter.getCount();i++) {
+                TakeoutCategory tc = (TakeoutCategory) categoryAdapter.getItem(i);
+                if(tc.getId()==categoryId){
+                    categorySpinner.setSelection(i);
+                    break;
+                }
+            }
+            descriptionET.setText(productJO.getString("description"));
+            integralET.setText(String.valueOf(productJO.getInt("integral")));
+            priceET.setText(String.valueOf(productJO.getDouble("price")));
+            priceCanheET.setText(String.valueOf(productJO.getDouble("priceCanhe")));
+            inventoryET.setText(String.valueOf(productJO.getInt("inventory")));
+            inventoryCountET.setText(String.valueOf(productJO.getInt("inventoryCount")));
+            id=productJO.getInt("id");
+
+            tempPhotoPath=getIntent().getStringExtra("tempPhotoPath");
+            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
+            imgUrlSDV.setImageBitmap(bm);
+            imgUrlSDV.setTag(tempPhotoPath);
+
+            propertyList.clear();
+            String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
+            Log.e("productPropertyJAStr===",""+productPropertyJAStr);
+            JSONArray productPropertyJA = new JSONArray(productPropertyJAStr);
+            for(int i=0;i<productPropertyJA.length();i++){
+                ProductProperty productProperty=new ProductProperty();
+                JSONObject propertyJO = (JSONObject)productPropertyJA.get(i);
+                productProperty.setPropertyName(propertyJO.getString("propertyE"));
+                propertyList.add(productProperty);
+            }
+            editProductPropertyAdapter.notifyDataSetChanged();;
+            hideLoadingDialog();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -161,8 +222,8 @@ public class EditProductActivity extends BaseActivity {
                     Uri uri = Uri.parse(takeoutProduct.getImgUrl());
                     imgUrlSDV.setImageURI(uri);
                     descriptionET.setText(takeoutProduct.getDescription());
-                    priceET.setText("￥"+takeoutProduct.getPrice());
-                    priceCanheET.setText("￥"+takeoutProduct.getPriceCanhe());
+                    priceET.setText(String.valueOf(takeoutProduct.getPrice()));
+                    priceCanheET.setText(String.valueOf(takeoutProduct.getPriceCanhe()));
                     inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
                     inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
                     initPropertyGV(takeoutProduct.getProperty());
@@ -178,22 +239,24 @@ public class EditProductActivity extends BaseActivity {
 
     private void initPropertyGV(String property) {
         String[] propertyArr = property.split(",");
-        propertyList = new ArrayList<>();
+        propertyList = new ArrayList<ProductProperty>();
         for (String pro : propertyArr){
-            propertyList.add(pro);
+            ProductProperty pp=new ProductProperty();
+            pp.setPropertyName(pro);
+            propertyList.add(pp);
         }
-        EditProductPropertyAdapter adapter = new EditProductPropertyAdapter(EditProductActivity.this, propertyList);
-        propertyGV.setAdapter(adapter);
+        editProductPropertyAdapter = new EditProductPropertyAdapter(EditProductActivity.this, propertyList);
+        propertyGV.setAdapter(editProductPropertyAdapter);
     }
 
     private void initCategorySpinner(List<TakeoutCategory> categoryList) {
-        final CategoryAdapter adapter = new CategoryAdapter(EditProductActivity.this, categoryList);
-        categorySpinner.setAdapter(adapter);
+        categoryAdapter = new CategoryAdapter(EditProductActivity.this, categoryList);
+        categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                TakeoutCategory tc = (TakeoutCategory)adapter.getItem(i);
+                TakeoutCategory tc = (TakeoutCategory)categoryAdapter.getItem(i);
                 categoryId=tc.getId();
             }
 
@@ -250,42 +313,23 @@ public class EditProductActivity extends BaseActivity {
             if(which>=0)
                 index=which;
             else if(which==DialogInterface.BUTTON_POSITIVE){
-                switch (index) {
-                    case ImageUtil.FROMALBUM:
-                        uploadFromAlbum();
-                        index=0;
-                        break;
-                    case ImageUtil.FROMTAKE:
-                        uploadFromTake();
-                        index=0;
-                        break;
+                try {
+                    Intent intent=new Intent(EditProductActivity.this,UploadPhotoActivity.class);
+                    intent.putExtra("productParamsJOStr", initProductParamsJOStr());
+                    intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
+                    intent.putExtra("productId",id);
+                    intent.putExtra("activityFrom",ImageUtil.EDITFROM);
+                    intent.putExtra("uploadFrom",index);
+                    startActivity(intent);
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                index=0;
             }
             else if(which==DialogInterface.BUTTON_NEGATIVE)
                 showMessage("你选择了取消操作");
         }
-    }
-
-    /**
-     * 从相册上传
-     * **/
-    public void uploadFromAlbum() {
-        // TODO Auto-generated method stub
-        Intent intent=new Intent();
-        intent.setType("image/");
-        intent.setAction(intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, ImageUtil.FROMALBUM);
-    }
-
-    /**
-     * 拍照上传
-     * **/
-    public void uploadFromTake() {
-        // TODO Auto-generated method stub
-        //下面是调用系统的照相机拍照
-        Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //启动拍照设备，等待处理拍照结果
-        startActivityForResult(intent,  ImageUtil.FROMTAKE);
     }
 
     @Override
@@ -309,6 +353,7 @@ public class EditProductActivity extends BaseActivity {
         params.put("takeoutProductPropertyJAStr",initProductPropertyJAStr());
         params.put("imgFile", new File(imgUrlSDV.getTag().toString()));
 
+        showLoadingDialog(EditProductActivity.this,"上传中");
         AsynClient.post(MyHttpConfing.saveProduct, EditProductActivity.this, params, new GsonHttpResponseHandler() {
             @Override
             protected Object parseResponse(String rawJsonData) throws Throwable {
@@ -324,16 +369,25 @@ public class EditProductActivity extends BaseActivity {
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
                 Log.e("rawJsonResponse======",""+rawJsonResponse);
 
+                Gson gson = new Gson();
+                SuccessEntity successEntity = gson.fromJson(rawJsonResponse, SuccessEntity.class);
+                if (successEntity.getCode() == 100){
+                    showMessage(successEntity.getMessage());
+
+                    Intent intent = new Intent(EditProductActivity.this, ProductListActivity.class);
+                    startActivity(intent);
+                    AllActivitiesHolder.removeAct(EditProductActivity.this);
+                    hideLoadingDialog();
+                }
             }
         });
     }
 
     private String initProductPropertyJAStr() throws JSONException {
         JSONArray ja = new JSONArray();
-        propertyList.size();
-        for(String property : propertyList){
+        for(ProductProperty property : propertyList){
             JSONObject jo = new JSONObject();
-            jo.put("propertyE",property);
+            jo.put("propertyE",property.getPropertyName());
             ja.put(jo);
         }
         return ja.toString();
@@ -343,12 +397,13 @@ public class EditProductActivity extends BaseActivity {
         JSONObject jo = new JSONObject();
         jo.put("productName",productNameET.getText().toString());
         jo.put("categoryId",categoryId);
-        jo.put("description  ",descriptionET.getText().toString());
+        jo.put("description",descriptionET.getText().toString());
         jo.put("price",priceET.getText().toString());
         jo.put("priceCanhe",priceCanheET.getText().toString());
         jo.put("inventory",inventoryET.getText().toString());
         jo.put("inventoryCount",inventoryCountET.getText().toString());
-        jo.put("integral",integralET.getText().toString());
+        String integralStr = integralET.getText().toString();
+        jo.put("integral",Integer.valueOf(TextUtils.isEmpty(integralStr)?"0":integralStr));
         jo.put("id",id);
         return jo.toString();
     }

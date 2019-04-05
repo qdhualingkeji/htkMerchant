@@ -39,6 +39,11 @@ public class ImageUtil {
      * **/
     public static final int FROMALBUM=0;//选择从相册上传
     public static final int FROMTAKE=1;//选择拍照上传
+    /**
+     * 从哪里跳转来的
+     */
+    public static final int ADDFROM=0;//从添加图片跳转
+    public static final int EDITFROM=1;//从编辑图片跳转
 
     private FutureTask<Boolean> uploadTask;
 

@@ -19,11 +19,6 @@ import butterknife.OnClick;
 
 public class UploadPhotoActivity extends BaseActivity {
 
-    private String productParamsJOStr;
-    private String productParamsJAStr;
-    private String productPropertyJAStr;
-    private String tempPhotoPath;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +35,10 @@ public class UploadPhotoActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                int fromFlag = getIntent().getIntExtra("fromFlag", 0);
-                if(fromFlag==ImageUtil.FROMALBUM)
+                int uploadFrom = getIntent().getIntExtra("uploadFrom", 0);
+                if(uploadFrom==ImageUtil.FROMALBUM)
                     uploadFromAlbum();
-                else if(fromFlag==ImageUtil.FROMTAKE)
+                else if(uploadFrom==ImageUtil.FROMTAKE)
                     uploadFromTake();
             }
         },1000);
@@ -91,19 +86,31 @@ public class UploadPhotoActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //拍摄图片返回情况
         if(resultCode==RESULT_OK){
+            String tempPhotoPath = null;
             if(requestCode==ImageUtil.FROMALBUM)
                 tempPhotoPath=ImageUtil.getPhotoPath(data,UploadPhotoActivity.this,ImageUtil.FROMALBUM);
             else if(requestCode==ImageUtil.FROMTAKE)
                 tempPhotoPath=ImageUtil.getPhotoPath(data,UploadPhotoActivity.this,ImageUtil.FROMTAKE);
             Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
 
-            Intent intent=new Intent(UploadPhotoActivity.this,AddProductActivity.class);
-            productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
-            productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
-            productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
+            int activityFrom = getIntent().getIntExtra("activityFrom", 0);
+            Intent intent=new Intent(UploadPhotoActivity.this,activityFrom==ImageUtil.ADDFROM?AddProductActivity.class:EditProductActivity.class);
+
+            String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
             intent.putExtra("productParamsJOStr", productParamsJOStr);
-            intent.putExtra("productParamsJAStr", productParamsJAStr);
+
+            if(activityFrom==ImageUtil.ADDFROM) {
+                String productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
+                intent.putExtra("productParamsJAStr", productParamsJAStr);
+            }
+            else{
+                int productId = getIntent().getIntExtra("productId", 0);
+                intent.putExtra("productId",productId);
+            }
+
+            String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
             intent.putExtra("productPropertyJAStr", productPropertyJAStr);
+
             intent.putExtra("tempPhotoPath", tempPhotoPath);
             intent.putExtra("reload",true);
             startActivity(intent);

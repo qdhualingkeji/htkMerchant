@@ -80,8 +80,8 @@ public class AddProductPropertyAdapter extends BaseAdapter {
         }
         */
 
-        final EditText propertyNameET = holder.propertyNameET;
         final ProductProperty productProperty = mData.get(position);
+        final EditText propertyNameET = holder.propertyNameET;
         propertyNameET.setText(productProperty.getPropertyName());
         propertyNameET.addTextChangedListener(new TextWatcher() {
             @Override
