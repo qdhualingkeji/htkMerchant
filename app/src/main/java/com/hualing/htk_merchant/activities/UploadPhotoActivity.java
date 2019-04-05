@@ -20,6 +20,8 @@ public class UploadPhotoActivity extends BaseActivity {
 
     private UploadTypeOnClick uploadTypeOnClick=new UploadTypeOnClick(0);
     private String productParamsJOStr;
+    private String productParamsJAStr;
+    private String productPropertyJAStr;
     private String tempPhotoPath;
 
     @Override
@@ -139,8 +141,13 @@ public class UploadPhotoActivity extends BaseActivity {
 
             Intent intent=new Intent(UploadPhotoActivity.this,AddProductActivity.class);
             productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
+            productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
+            productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
             intent.putExtra("productParamsJOStr", productParamsJOStr);
+            intent.putExtra("productParamsJAStr", productParamsJAStr);
+            intent.putExtra("productPropertyJAStr", productPropertyJAStr);
             intent.putExtra("tempPhotoPath", tempPhotoPath);
+            intent.putExtra("reload",true);
             startActivity(intent);
             finish();
         }

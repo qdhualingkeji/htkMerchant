@@ -1,5 +1,8 @@
 package com.hualing.htk_merchant.adapter;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -58,7 +61,7 @@ public class PriceInventoryAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return mData.get(position);
     }
 
     @Override
@@ -69,20 +72,96 @@ public class PriceInventoryAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        if(convertView==null){
+        //if(convertView==null){
             convertView=context.getLayoutInflater().inflate(R.layout.item_price_inventory,parent,false);
             holder=new ViewHolder(convertView);
             convertView.setTag(holder);
+            /*
         }
         else{
             holder=(ViewHolder)convertView.getTag();
         }
+        */
 
-        TakeoutProduct takeoutProduct = mData.get(position);
-        holder.priceET.setText(String.valueOf(takeoutProduct.getPrice()));
-        holder.priceCanheET.setText(String.valueOf(takeoutProduct.getPriceCanhe()));
-        holder.inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
-        holder.inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
+        final TakeoutProduct takeoutProduct = mData.get(position);
+        final EditText priceET = holder.priceET;
+        priceET.setText(String.valueOf(takeoutProduct.getPrice()));
+        priceET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                takeoutProduct.setPrice(Double.valueOf(priceET.getText().toString()));
+                notifyDataSetChanged();
+            }
+        });
+
+        final EditText priceCanheET = holder.priceCanheET;
+        priceCanheET.setText(String.valueOf(takeoutProduct.getPriceCanhe()));
+        priceCanheET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                takeoutProduct.setPriceCanhe(Double.valueOf(priceCanheET.getText().toString()));
+                notifyDataSetChanged();
+            }
+        });
+
+        final EditText inventoryET = holder.inventoryET;
+        inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
+        inventoryET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                takeoutProduct.setInventory(Integer.valueOf(inventoryET.getText().toString()));
+                notifyDataSetChanged();
+            }
+        });
+        final EditText inventoryCountET = holder.inventoryCountET;
+        inventoryCountET.setText(String.valueOf(takeoutProduct.getInventoryCount()));
+        inventoryCountET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                takeoutProduct.setInventoryCount(Integer.valueOf(inventoryCountET.getText().toString()));
+                notifyDataSetChanged();
+            }
+        });
         holder.removeGGBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

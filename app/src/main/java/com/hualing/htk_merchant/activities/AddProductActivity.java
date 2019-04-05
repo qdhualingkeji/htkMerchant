@@ -1,6 +1,7 @@
 package com.hualing.htk_merchant.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,10 +26,13 @@ import com.hualing.htk_merchant.adapter.AddProductPropertyAdapter;
 import com.hualing.htk_merchant.adapter.CategoryAdapter;
 import com.hualing.htk_merchant.adapter.PriceInventoryAdapter;
 import com.hualing.htk_merchant.entity.LoginUserEntity;
+import com.hualing.htk_merchant.entity.SuccessEntity;
 import com.hualing.htk_merchant.entity.TakeoutCategoryEntity;
 import com.hualing.htk_merchant.global.GlobalData;
+import com.hualing.htk_merchant.model.ProductProperty;
 import com.hualing.htk_merchant.model.TakeoutCategory;
 import com.hualing.htk_merchant.model.TakeoutProduct;
+import com.hualing.htk_merchant.util.AllActivitiesHolder;
 import com.hualing.htk_merchant.util.ImageUtil;
 import com.hualing.htk_merchant.util.IntentUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
@@ -62,7 +66,7 @@ public class AddProductActivity extends BaseActivity {
     private PriceInventoryAdapter priceInventoryAdapter;
     @BindView(R.id.priceInventory_lv)
     ListView priceInventoryLV;
-    private List<String> propertyList;
+    private List<ProductProperty> propertyList;
     private AddProductPropertyAdapter addProductPropertyAdapter;
     @BindView(R.id.property_gv)
     GridView propertyGV;
@@ -76,6 +80,7 @@ public class AddProductActivity extends BaseActivity {
     public Button addProBut;
     private Integer categoryId;
     private String tempPhotoPath;
+    private boolean reload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,20 +90,33 @@ public class AddProductActivity extends BaseActivity {
     @Override
     protected void initLogic() {
 
+        Log.e("zzzzzzzz",""+GlobalData.userID);
+        reload = getIntent().getBooleanExtra("reload", false);
         if(GlobalData.userID==null){
             toLogin();
         }
         else{
             initData();
         }
+
+        if(reload) {
+            Log.e("bbbbbbbb", "bbbbbbbbbb");
+            showLoadingDialog(AddProductActivity.this);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initProductData();
+                }
+            }, 3000);
+        }
     }
+
 
     private void initProductData() {
         try {
             String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
-            Log.e("productParamsJOStr===",""+productParamsJOStr);
             JSONObject productJO = new JSONObject(productParamsJOStr);
-                productNameET.setText(productJO.getString("productName"));
+            productNameET.setText(productJO.getString("productName"));
             categoryId= productJO.getInt("categoryId");
             for (int i=0;i<categoryAdapter.getCount();i++) {
                 TakeoutCategory tc = (TakeoutCategory) categoryAdapter.getItem(i);
@@ -114,12 +132,38 @@ public class AddProductActivity extends BaseActivity {
             Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
             imgUrlSDV.setImageBitmap(bm);
             imgUrlSDV.setTag(tempPhotoPath);
+
+            String productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
+            JSONArray productJA = new JSONArray(productParamsJAStr);
+            for (int i=0;i<productJA.length();i++){
+                TakeoutProduct priceInventory=new TakeoutProduct();
+                JSONObject priceInventoryJO = (JSONObject)productJA.get(i);
+                priceInventory.setPrice(priceInventoryJO.getDouble("price"));
+                priceInventory.setPriceCanhe(priceInventoryJO.getDouble("priceCanhe"));
+                priceInventory.setInventory(priceInventoryJO.getInt("inventory"));
+                priceInventory.setInventoryCount(priceInventoryJO.getInt("inventoryCount"));
+                priceInventoryList.add(priceInventory);
+            }
+            priceInventoryAdapter.notifyDataSetChanged();
+
+            String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
+            Log.e("productPropertyJAStr===",""+productPropertyJAStr);
+            JSONArray productPropertyJA = new JSONArray(productPropertyJAStr);
+            for(int i=0;i<productPropertyJA.length();i++){
+                ProductProperty productProperty=new ProductProperty();
+                JSONObject propertyJO = (JSONObject)productPropertyJA.get(i);
+                productProperty.setPropertyName(propertyJO.getString("propertyE"));
+                propertyList.add(productProperty);
+            }
+            addProductPropertyAdapter.notifyDataSetChanged();;
+            hideLoadingDialog();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void toLogin(){
+        Log.e("aaaaaaaaaa","aaaaaaaaaa");
         RequestParams params = AsynClient.getRequestParams();
         params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
         params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);
@@ -151,12 +195,6 @@ public class AddProductActivity extends BaseActivity {
                     GlobalData.state = loginUserData.getState();
 
                     initData();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            initProductData();
-                        }
-                    },3000);
                 }
                 else {
                     showMessage(loginUserEntity.getMessage());
@@ -172,17 +210,20 @@ public class AddProductActivity extends BaseActivity {
     }
 
     private void initPropertyGV() {
-        propertyList = new ArrayList<>();
+        propertyList = new ArrayList<ProductProperty>();
         addProductPropertyAdapter = new AddProductPropertyAdapter(AddProductActivity.this, propertyList);
-        addProductPropertyAdapter.addProperty();
-        addProductPropertyAdapter.addProperty();
+        if(!reload) {
+            addProductPropertyAdapter.addProperty();
+            addProductPropertyAdapter.addProperty();
+        }
         propertyGV.setAdapter(addProductPropertyAdapter);
     }
 
     private void initPriceInventory() {
         priceInventoryList=new ArrayList<TakeoutProduct>();
         priceInventoryAdapter = new PriceInventoryAdapter(AddProductActivity.this, priceInventoryList);
-        priceInventoryAdapter.addGG();
+        if(!reload)
+            priceInventoryAdapter.addGG();
         priceInventoryLV.setAdapter(priceInventoryAdapter);
     }
 
@@ -264,10 +305,11 @@ public class AddProductActivity extends BaseActivity {
                 addProperty();
                 break;
             case R.id.imgUrl_sdv:
-                //uploadPhoto();
                 try {
                     Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
                     intent.putExtra("productParamsJOStr", initProductParamsJOStr());
+                    intent.putExtra("productParamsJAStr", initProductParamsJAStr());
+                    intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
                     startActivity(intent);
                     finish();
                 } catch (JSONException e) {
@@ -328,16 +370,24 @@ public class AddProductActivity extends BaseActivity {
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
                 Log.e("rawJsonResponse======",""+rawJsonResponse);
 
+                Gson gson = new Gson();
+                SuccessEntity successEntity = gson.fromJson(rawJsonResponse, SuccessEntity.class);
+                if (successEntity.getCode() == 100){
+                    showMessage(successEntity.getMessage());
+
+                    Intent intent = new Intent(AddProductActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    AllActivitiesHolder.removeAct(AddProductActivity.this);
+                }
             }
         });
     }
 
     private String initProductPropertyJAStr() throws JSONException {
         JSONArray ja = new JSONArray();
-        propertyList.size();
-        for(String property : propertyList){
+        for(ProductProperty property : propertyList){
             JSONObject jo = new JSONObject();
-            jo.put("propertyE",property);
+            jo.put("propertyE",property.getPropertyName());
             ja.put(jo);
         }
         return ja.toString();
@@ -345,7 +395,7 @@ public class AddProductActivity extends BaseActivity {
 
     private String initProductParamsJAStr() throws JSONException {
         JSONArray ja = new JSONArray();
-        for (TakeoutProduct priceInventory : priceInventoryList){
+        for (TakeoutProduct priceInventory:priceInventoryList){
             JSONObject jo = new JSONObject();
             jo.put("price",priceInventory.getPrice());
             jo.put("priceCanhe",priceInventory.getPriceCanhe());
@@ -369,7 +419,7 @@ public class AddProductActivity extends BaseActivity {
 
     private void addProperty() {
 
-        List<String> mData = addProductPropertyAdapter.getmData();
+        List<ProductProperty> mData = addProductPropertyAdapter.getmData();
         int size = mData.size();
         if(size<5) {
             addProductPropertyAdapter.addProperty();

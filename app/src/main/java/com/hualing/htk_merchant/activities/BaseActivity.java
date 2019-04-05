@@ -1,9 +1,12 @@
 package com.hualing.htk_merchant.activities;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
 
 import butterknife.ButterKnife;
@@ -21,6 +24,7 @@ import butterknife.Unbinder;
 public abstract class BaseActivity extends AppCompatActivity {
 
     Unbinder unBinder;
+    private Dialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        }
         getDataFormWeb();
 
+    }
+
+    protected void showLoadingDialog(BaseActivity activity) {
+        loadingDialog = new Dialog(activity);
+        loadingDialog.setContentView(R.layout.progress_bar_loading);
+        loadingDialog.show();
+    }
+
+    protected void hideLoadingDialog(){
+        loadingDialog.dismiss();
     }
 
     @Override

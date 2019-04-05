@@ -24,6 +24,7 @@
             android:id="@+id/price_et"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
             android:layout_weight="1"
             android:layout_marginRight="15dp"/>
 
