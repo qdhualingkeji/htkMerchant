@@ -20,18 +20,24 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.gson.Gson;
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.adapter.DeliveryAdapter;
 import com.hualing.htk_merchant.adapter.FinishedAdapter;
 import com.hualing.htk_merchant.adapter.MyPagerAdapter;
 import com.hualing.htk_merchant.adapter.NewOrderAdapter;
 import com.hualing.htk_merchant.aframework.yoni.YoniClient;
+import com.hualing.htk_merchant.entity.LoginUserEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.global.TheApplication;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
 import com.hualing.htk_merchant.util.IntentUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
+import com.hualing.htk_merchant.utils.AsynClient;
+import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.ImageLoadManager;
+import com.hualing.htk_merchant.utils.MyHttpConfing;
+import com.loopj.android.http.RequestParams;
 
 public class MainActivity extends BaseActivity {
 
@@ -63,6 +69,55 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initLogic() {
+        if(GlobalData.userID==null){
+            toLogin();
+        }
+        else{
+            initData();
+        }
+    }
+
+    private void toLogin(){
+        RequestParams params = AsynClient.getRequestParams();
+        params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
+        params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);
+
+        AsynClient.post(MyHttpConfing.login, this, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse======",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                LoginUserEntity loginUserEntity = gson.fromJson(rawJsonResponse, LoginUserEntity.class);
+                if (loginUserEntity.getCode() == 100) {
+                    LoginUserEntity.DataBean loginUserData = loginUserEntity.getData();
+                    GlobalData.userID = loginUserData.getUserId();
+                    GlobalData.userName = loginUserData.getUserName();
+                    GlobalData.password = loginUserData.getPassword();
+                    GlobalData.avatarImg = loginUserData.getAvatarImg();
+                    GlobalData.shopName = loginUserData.getShopName();
+                    GlobalData.state = loginUserData.getState();
+
+                    initData();
+                }
+                else {
+                    showMessage(loginUserEntity.getMessage());
+                }
+            }
+        });
+    }
+
+    private void initData(){
         getScreenSize();
         initMyPagerAdapter();
         mToolBar.setTitle(getResources().getString(R.string.app_name));//设置Toolbar标题
