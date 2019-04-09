@@ -184,7 +184,7 @@ public class DeliveryAdapter extends BaseAdapter {
     public void enterReceipt(String orderNumber, String token, final int position){
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
-        params.put("token", token);
+        params.put("accountToken", token);
         AsynClient.post(MyHttpConfing.enterReceipt, context, params, new GsonHttpResponseHandler() {
             @Override
             protected Object parseResponse(String rawJsonData) throws Throwable {
@@ -193,13 +193,13 @@ public class DeliveryAdapter extends BaseAdapter {
 
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
+                Log.e("rawJsonData===",""+rawJsonData);
 
             }
 
             @Override
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
+                Log.e("rawJsonResponse===",""+rawJsonResponse);
                 Log.i(MyHttpConfing.tag, rawJsonResponse);
 
                 Gson gson = new Gson();

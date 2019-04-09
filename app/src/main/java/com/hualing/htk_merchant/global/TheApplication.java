@@ -20,6 +20,8 @@ import com.hualing.htk_merchant.R;
 
 import java.io.File;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * @author 马鹏昊
  * @date {2016-10-28}
@@ -70,6 +72,9 @@ public class TheApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
+
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
 
         sSharedPreferences = mContext.getSharedPreferences("loginInfo", MODE_PRIVATE);
 

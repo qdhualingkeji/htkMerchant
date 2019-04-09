@@ -11,6 +11,7 @@
         android:text="新订单"
         android:textColor="@drawable/pager_switcher"
         android:background="@color/pagerSwitcherBg"/>
+
     <Button
         android:id="@+id/dot2"
         android:layout_width="wrap_content"
@@ -19,6 +20,7 @@
         android:text="配送中"
         android:textColor="@drawable/pager_switcher"
         android:background="@color/pagerSwitcherBg"/>
+
     <Button
         android:id="@+id/dot3"
         android:layout_width="wrap_content"

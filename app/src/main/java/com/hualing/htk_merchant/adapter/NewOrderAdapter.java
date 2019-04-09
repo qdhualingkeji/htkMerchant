@@ -136,7 +136,7 @@ public class NewOrderAdapter extends BaseAdapter {
         holder.refuseBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancelOrder(orderRecord.getOrderNumber(),position);
+                cancelOrder(orderRecord.getOrderNumber(),orderRecord.getAccountToken(),position);
             }
         });
         return convertView;
@@ -199,19 +199,19 @@ public class NewOrderAdapter extends BaseAdapter {
 
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
+                Log.e("rawJsonData===",""+rawJsonData);
 
             }
 
             @Override
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
+                Log.e("rawJsonResponse===",""+rawJsonResponse);
+                //Log.i(MyHttpConfing.tag, rawJsonResponse);
 
                 Gson gson = new Gson();
                 CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
                 if(commonMsg.getCode()==0){
-                    mData.remove(position);
+                    //mData.remove(position);
                     //notifyDataSetChanged();
                     if(deliveryFlag==ZI_XING)
                         ziXingDelivery(orderNumber,position);
@@ -230,11 +230,12 @@ public class NewOrderAdapter extends BaseAdapter {
      * @param orderNumber
      * @param position
      */
-    private void cancelOrder(String orderNumber, final int position) {
+    private void cancelOrder(String orderNumber,  String token, final int position) {
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         params.put("content", "其他原因");
         params.put("mark", 0);
+        params.put("accountToken", token);
         AsynClient.post(MyHttpConfing.cancelOrder, context, params, new GsonHttpResponseHandler() {
             @Override
             protected Object parseResponse(String rawJsonData) throws Throwable {
@@ -243,14 +244,14 @@ public class NewOrderAdapter extends BaseAdapter {
 
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
+                Log.e("rawJsonData===",""+rawJsonData);
 
             }
 
             @Override
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
+                Log.e("rawJsonResponse===",""+rawJsonResponse);
+                //Log.i(MyHttpConfing.tag, rawJsonResponse);
 
                 Gson gson = new Gson();
                 CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
@@ -279,14 +280,14 @@ public class NewOrderAdapter extends BaseAdapter {
 
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
-                //Log.e("rawJsonData===",""+rawJsonData);
+                Log.e("rawJsonData===",""+rawJsonData);
 
             }
 
             @Override
             public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
-                //Log.e("rawJsonResponse===",""+rawJsonResponse);
-                Log.i(MyHttpConfing.tag, rawJsonResponse);
+                Log.e("rawJsonResponse===",""+rawJsonResponse);
+                //Log.i(MyHttpConfing.tag, rawJsonResponse);
 
                 Gson gson = new Gson();
                 CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);

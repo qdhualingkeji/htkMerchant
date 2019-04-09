@@ -10,13 +10,13 @@ public class MyHttpConfing {
 
     public static final String baseUrl = "http://120.27.5.36:8080/htkApp/API/";//客户版本外网
     public static final String merchantAppUrl = baseUrl + "merchantAppAPI/";
-    public static final String payUrl = baseUrl + "paymentInterfaceAPI/";
+    //public static final String payUrl = baseUrl + "paymentInterfaceAPI/";
     public static final String riderUrl = baseUrl + "riderAPI/";
 
     /* 获得新订单数据 */
     public static final String getNewOrderList = merchantAppUrl + "getNewOrderList";
     /*取消订单*/
-    public static final String cancelOrder = payUrl + "callUpRefundInterface";
+    public static final String cancelOrder = merchantAppUrl + "callUpRefundInterface";
     /*确认订单*/
     public static final String confirmTheOrder = merchantAppUrl + "confirmTheOrder";
     /*确认已完成订单*/

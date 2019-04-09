@@ -17,12 +17,14 @@ import com.hualing.htk_merchant.util.AllActivitiesHolder;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
+import com.hualing.htk_merchant.utils.MyApplication;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
 import com.loopj.android.http.RequestParams;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 
 public class LoginActivity extends BaseActivity {
 

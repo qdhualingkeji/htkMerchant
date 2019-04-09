@@ -10,18 +10,23 @@ import com.hualing.htk_merchant.entity.LoginUserEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
 import com.hualing.htk_merchant.util.IntentUtil;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
+import com.hualing.htk_merchant.utils.MyApplication;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
 import com.loopj.android.http.RequestParams;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class LaunchActivity extends BaseActivity {
 
     private static final long DELAY = 3000;
+    private static final int JPUSH_ONE = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,15 @@ public class LaunchActivity extends BaseActivity {
                     GlobalData.avatarImg = loginUserData.getAvatarImg();
                     GlobalData.shopName = loginUserData.getShopName();
                     GlobalData.state = loginUserData.getState();
+
+                    //登录完毕,设置JPUSH的Alias识别
+                    //String alias = loginUserData.getToken().toString().replaceAll("-", "");
+                    String alias = "f8030831-996d-4a42-8ac3-df1b3793de19".replaceAll("-", "");
+                    alias = alias.trim();
+                    Log.e("alias===",""+alias);
+                    JPushInterface.setAlias(LaunchActivity.this , JPUSH_ONE  , GlobalData.userName);
+                    //设置JPush别名
+                    JPushUtil.setAlias(LaunchActivity.this,alias);
 
                     Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
                     startActivity(intent);
