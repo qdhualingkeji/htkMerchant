@@ -40,9 +40,11 @@ public class DeliveryAdapter extends BaseAdapter {
 
     private List<OrderRecordEntity.DataBean> mData;
     private MainActivity context;
+    private Button mDot2;
 
-    public DeliveryAdapter(MainActivity context){
+    public DeliveryAdapter(MainActivity context,Button mDot2){
         this.context = context;
+        this.mDot2=mDot2;
         mData=new ArrayList<OrderRecordEntity.DataBean>();
     }
 
@@ -78,7 +80,9 @@ public class DeliveryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mData.size();
+        int size = mData.size();
+        mDot2.setText("配送中("+size+")");
+        return size;
     }
 
     @Override
@@ -182,6 +186,7 @@ public class DeliveryAdapter extends BaseAdapter {
      * @param position
      */
     public void enterReceipt(String orderNumber, String token, final int position){
+        context.showLoadingDialog(context,"确认收货中");
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         params.put("accountToken", token);
@@ -194,7 +199,7 @@ public class DeliveryAdapter extends BaseAdapter {
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
                 Log.e("rawJsonData===",""+rawJsonData);
-
+                context.hideLoadingDialog();
             }
 
             @Override
@@ -207,10 +212,11 @@ public class DeliveryAdapter extends BaseAdapter {
                 if(commonMsg.getCode()==0){
                     mData.remove(position);
                     notifyDataSetChanged();
+                    context.getmViewPager().setCurrentItem(2);
                 }
 
                 context.showMessage(commonMsg.getMessage());
-
+                context.hideLoadingDialog();
             }
         });
     }

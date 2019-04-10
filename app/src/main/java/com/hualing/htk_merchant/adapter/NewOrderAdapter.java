@@ -16,6 +16,7 @@ import com.hualing.htk_merchant.entity.OrderRecordEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -42,9 +43,11 @@ public class NewOrderAdapter extends BaseAdapter {
 
     private List<OrderRecordEntity.DataBean> mData;
     private MainActivity context;
+    private Button mDot1;
 
-    public NewOrderAdapter(MainActivity context){
+    public NewOrderAdapter(MainActivity context,Button mDot1){
         this.context = context;
+        this.mDot1=mDot1;
         mData=new ArrayList<OrderRecordEntity.DataBean>();
     }
 
@@ -80,7 +83,9 @@ public class NewOrderAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mData.size();
+        int size = mData.size();
+        mDot1.setText("新订单("+size+")");
+        return size;
     }
 
     @Override
@@ -189,6 +194,7 @@ public class NewOrderAdapter extends BaseAdapter {
      * @param position
      */
     private void confirmOrder(final String orderNumber, final int position, final int deliveryFlag){
+        context.showLoadingDialog(context,"接单中");
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         AsynClient.post(MyHttpConfing.confirmTheOrder, context, params, new GsonHttpResponseHandler() {
@@ -200,7 +206,7 @@ public class NewOrderAdapter extends BaseAdapter {
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
                 Log.e("rawJsonData===",""+rawJsonData);
-
+                context.hideLoadingDialog();
             }
 
             @Override
@@ -220,7 +226,7 @@ public class NewOrderAdapter extends BaseAdapter {
                 }
 
                 context.showMessage(commonMsg.getMessage());
-
+                context.hideLoadingDialog();
             }
         });
     }
@@ -231,6 +237,7 @@ public class NewOrderAdapter extends BaseAdapter {
      * @param position
      */
     private void cancelOrder(String orderNumber,  String token, final int position) {
+        context.showLoadingDialog(context,"拒单中");
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         params.put("content", "其他原因");
@@ -245,7 +252,7 @@ public class NewOrderAdapter extends BaseAdapter {
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
                 Log.e("rawJsonData===",""+rawJsonData);
-
+                context.hideLoadingDialog();
             }
 
             @Override
@@ -258,7 +265,7 @@ public class NewOrderAdapter extends BaseAdapter {
                 mData.remove(position);
                 notifyDataSetChanged();
                 context.showMessage(commonMsg.getMessage());
-
+                context.hideLoadingDialog();
             }
         });
 
@@ -294,6 +301,7 @@ public class NewOrderAdapter extends BaseAdapter {
                 if(commonMsg.getCode()==0){
                     mData.remove(position);
                     notifyDataSetChanged();
+                    context.getmViewPager().setCurrentItem(1);
                 }
 
                 context.showMessage(commonMsg.getMessage());

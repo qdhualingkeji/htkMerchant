@@ -32,6 +32,7 @@ import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.global.TheApplication;
 import com.hualing.htk_merchant.util.AllActivitiesHolder;
 import com.hualing.htk_merchant.util.IntentUtil;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
@@ -61,6 +62,14 @@ public class MainActivity extends BaseActivity {
     SimpleDraweeView mPortrait;
     private MyPagerAdapter mPagerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    public ViewPager getmViewPager() {
+        return mViewPager;
+    }
+
+    public void setmViewPager(ViewPager mViewPager) {
+        this.mViewPager = mViewPager;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +162,12 @@ public class MainActivity extends BaseActivity {
         mStateTV.setText(GlobalData.state==1?"营业中":"休息中");
     }
 
+    /*
+    public static void jiSuanOrderCount(){
+        mDot1.setText("新订单("+mPagerAdapter.getmAdapter1().getCount()+")");
+    }
+    */
+
     @Override
     protected void getDataFormWeb() {
 
@@ -239,7 +254,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void initMyPagerAdapter(){
-        mPagerAdapter = new MyPagerAdapter(MainActivity.this);
+        mPagerAdapter = new MyPagerAdapter(MainActivity.this,mDot1,mDot2,mDot3);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

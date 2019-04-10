@@ -86,12 +86,12 @@ public class LaunchActivity extends BaseActivity {
 
                     //登录完毕,设置JPUSH的Alias识别
                     //String alias = loginUserData.getToken().toString().replaceAll("-", "");
-                    String alias = "f8030831-996d-4a42-8ac3-df1b3793de19".replaceAll("-", "");
-                    alias = alias.trim();
-                    Log.e("alias===",""+alias);
+                    //String alias = "f8030831-996d-4a42-8ac3-df1b3793de19".replaceAll("-", "");
+                    //alias = alias.trim();
+                    //Log.e("alias===",""+alias);
                     JPushInterface.setAlias(LaunchActivity.this , JPUSH_ONE  , GlobalData.userName);
                     //设置JPush别名
-                    JPushUtil.setAlias(LaunchActivity.this,alias);
+                    //JPushUtil.setAlias(LaunchActivity.this,alias);
 
                     Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
                     startActivity(intent);

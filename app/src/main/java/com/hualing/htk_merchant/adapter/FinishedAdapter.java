@@ -38,9 +38,11 @@ public class FinishedAdapter extends BaseAdapter {
 
     private List<OrderRecordEntity.DataBean> mData;
     private MainActivity context;
+    private Button mDot3;
 
-    public FinishedAdapter(MainActivity context){
+    public FinishedAdapter(MainActivity context,Button mDot3){
         this.context = context;
+        this.mDot3=mDot3;
         mData=new ArrayList<OrderRecordEntity.DataBean>();
     }
 
@@ -76,7 +78,9 @@ public class FinishedAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mData.size();
+        int size = mData.size();
+        mDot3.setText("已完成("+size+")");
+        return size;
     }
 
     @Override
@@ -167,6 +171,7 @@ public class FinishedAdapter extends BaseAdapter {
      * @param position
      */
     private void comfirm(String orderNumber, final int position){
+        context.showLoadingDialog(context,"删除中");
         RequestParams params = AsynClient.getRequestParams();
         params.put("orderNumber", orderNumber);
         AsynClient.post(MyHttpConfing.confirmFinishedOrder, context, params, new GsonHttpResponseHandler() {
@@ -178,7 +183,7 @@ public class FinishedAdapter extends BaseAdapter {
             @Override
             public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
                 //Log.e("rawJsonData===",""+rawJsonData);
-
+                context.hideLoadingDialog();
             }
 
             @Override
@@ -194,7 +199,7 @@ public class FinishedAdapter extends BaseAdapter {
                 }
 
                 context.showMessage(commonMsg.getMessage());
-
+                context.hideLoadingDialog();
             }
         });
     }

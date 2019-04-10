@@ -32,6 +32,7 @@ public class LoginActivity extends BaseActivity {
     EditText userNameValue;
     @BindView(R.id.passwordValue)
     EditText passwordValue;
+    private static final int JPUSH_ONE = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,8 @@ public class LoginActivity extends BaseActivity {
                     GlobalData.avatarImg = loginUserData.getAvatarImg();
                     GlobalData.shopName = loginUserData.getShopName();
                     GlobalData.state = loginUserData.getState();
+
+                    JPushInterface.setAlias(LoginActivity.this , JPUSH_ONE  , GlobalData.userName);
 
                     SharedPreferenceUtil.rememberMerchant(userName, password);
 

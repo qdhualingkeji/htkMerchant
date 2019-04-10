@@ -5,10 +5,12 @@ import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.global.TheApplication;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.widget.pull2refresh.MyListener;
 import com.hualing.htk_merchant.widget.pull2refresh.PullToRefreshLayout;
 import com.hualing.htk_merchant.widget.pull2refresh.pullableview.PullableListView;
@@ -56,8 +58,7 @@ public class MyPagerAdapter extends PagerAdapter {
 
     private FinishedAdapter mAdapter3;
 
-    public MyPagerAdapter(MainActivity mainActivity){
-
+    public MyPagerAdapter(MainActivity mainActivity,Button mDot1,Button mDot2,Button mDot3){
         views = new ArrayList<>();
 
         view1 = View.inflate(mainActivity, R.layout.banner_layout_one_pager,null);
@@ -65,8 +66,9 @@ public class MyPagerAdapter extends PagerAdapter {
         mRefresher1 = view1.findViewById(R.id.refresher);
 
         mRefresher1.setOnRefreshListener(new MyListener());
-        mAdapter1 = new NewOrderAdapter(mainActivity);
+        mAdapter1 = new NewOrderAdapter(mainActivity,mDot1);
         mAdapter1.setNewData();
+        JPushUtil.setNewOrderAdapter(mAdapter1);
         mListView1.setAdapter(mAdapter1);
         views.add(view1);
         mRefresher1.autoRefresh();
@@ -76,7 +78,7 @@ public class MyPagerAdapter extends PagerAdapter {
         mRefresher2 = view2.findViewById(R.id.refresher);
 
         mRefresher2.setOnRefreshListener(new MyListener());
-        mAdapter2 = new DeliveryAdapter(mainActivity);
+        mAdapter2 = new DeliveryAdapter(mainActivity,mDot2);
         mAdapter2.setNewData();
         mListView2.setAdapter(mAdapter2);
         views.add(view2);
@@ -87,7 +89,7 @@ public class MyPagerAdapter extends PagerAdapter {
         mRefresher3 = view3.findViewById(R.id.refresher);
 
         mRefresher3.setOnRefreshListener(new MyListener());
-        mAdapter3 = new FinishedAdapter(mainActivity);
+        mAdapter3 = new FinishedAdapter(mainActivity,mDot3);
         mAdapter3.setNewData();
         mListView3.setAdapter(mAdapter3);
         views.add(view3);

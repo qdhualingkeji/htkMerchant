@@ -135,7 +135,8 @@
                     android:layout_height="30dp"
                     android:layout_marginLeft="20dp"
                     android:checked="true"
-                    android:text="自行配送" />
+                    android:text="自行配送"
+                    android:enabled="false"/>
 
                 <RadioButton
                     android:id="@+id/waiZhao_rb"
@@ -143,7 +144,8 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="-30dp"
                     android:layout_marginLeft="130dp"
-                    android:text="外招配送"/>
+                    android:text="外招配送"
+                    android:enabled="false"/>
 
             </RadioGroup>
 

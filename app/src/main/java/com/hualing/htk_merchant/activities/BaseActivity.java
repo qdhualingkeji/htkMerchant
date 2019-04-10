@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    protected void showLoadingDialog(BaseActivity activity,String message) {
+    public void showLoadingDialog(BaseActivity activity,String message) {
         loadingDialog = new Dialog(activity);
         loadingDialog.setContentView(R.layout.progress_bar_loading);
         TextView loadingMsgTv = (TextView) loadingDialog.findViewById(R.id.loading_msg_tv);
@@ -72,7 +72,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         loadingDialog.show();
     }
 
-    protected void hideLoadingDialog(){
+    public void hideLoadingDialog(){
         loadingDialog.dismiss();
     }
 

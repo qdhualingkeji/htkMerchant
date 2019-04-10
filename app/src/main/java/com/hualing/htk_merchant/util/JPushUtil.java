@@ -4,8 +4,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.hualing.htk_merchant.adapter.MyPagerAdapter;
+import com.hualing.htk_merchant.adapter.NewOrderAdapter;
 import com.hualing.htk_merchant.global.TheApplication;
 
 import java.util.Set;
@@ -25,7 +28,7 @@ import cn.jpush.android.api.TagAliasCallback;
 public class JPushUtil {
 
     private static final String TAG = "JPush";
-
+    public static NewOrderAdapter newOrderAdapter;
 
     // 这是来自 JPush Example 的设置别名的 Activity 里的代码。一般 App 的设置的调用入口，在任何方便的地方调用都可以。
     public static void setAlias(Context context,String alias) {
@@ -84,4 +87,7 @@ public class JPushUtil {
         }
     };
 
+    public static void setNewOrderAdapter(NewOrderAdapter newOrderAdapter){
+        JPushUtil.newOrderAdapter=newOrderAdapter;
+    }
 }

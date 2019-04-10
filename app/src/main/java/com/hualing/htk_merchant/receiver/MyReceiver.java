@@ -10,7 +10,9 @@ import android.util.Log;
 //import com.hualing.htk_merchant.activities.main.EmployeeMainActivity;
 //import com.hualing.qrcodetracker.activities.main.NonHandleMsgActivity;
 //import com.hualing.qrcodetracker.aframework.util.Logger;
+import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.global.TheApplication;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 
 import cn.jpush.android.api.JPushInterface;
@@ -60,6 +62,7 @@ public class MyReceiver extends BroadcastReceiver {
             //JPushInterface.clearAllNotifications(TheApplication.getContext());
 
             receivingNotification(context, bundle);
+            JPushUtil.newOrderAdapter.setNewData();
 
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
             Log.e(TAG, "用户点击打开了通知");
@@ -103,11 +106,9 @@ public class MyReceiver extends BroadcastReceiver {
         //            context.startActivity(mIntent);
         //        }
 
-        /*
-        Intent mIntent = new Intent(context, NonHandleMsgActivity.class);
+        Intent mIntent = new Intent(context, MainActivity.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mIntent);
-        */
 
     }
 }
