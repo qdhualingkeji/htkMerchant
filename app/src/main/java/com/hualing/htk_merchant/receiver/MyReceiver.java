@@ -4,18 +4,17 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.support.v4.app.NotificationCompat;
 
-//import com.hualing.htk_merchant.activities.main.EmployeeMainActivity;
-//import com.hualing.qrcodetracker.activities.main.NonHandleMsgActivity;
-//import com.hualing.qrcodetracker.aframework.util.Logger;
+import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
-import com.hualing.htk_merchant.global.TheApplication;
 import com.hualing.htk_merchant.util.JPushUtil;
-import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 
 import cn.jpush.android.api.JPushInterface;
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * @author 马鹏昊
@@ -81,6 +80,19 @@ public class MyReceiver extends BroadcastReceiver {
         Log.e(TAG, "message : " + message);
         String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
         Log.e(TAG, "extras : " + extras);
+
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(context);
+        //这一步必须要有而且setSmallIcon也必须要，没有就会设置自定义声音不成功
+        notification.setAutoCancel(true).setSmallIcon(R.mipmap.ic_launcher);
+        String alert = bundle.getString(JPushInterface.EXTRA_ALERT);
+        if (alert!=null&&!alert.equals("")){
+            notification.setSound(
+                    Uri.parse("android.resource://" + context.getPackageName() + "/" +R.raw.notification));
+        }
+
+        //最后刷新notification是必须的
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1,notification.build());
     }
 
     private void openNotification(Context context, Bundle bundle) {
