@@ -74,6 +74,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         * 敲黑板:黑代码解决Android 7.0 调用系统通知无法播放声音的问题
+         */
+        grantUriPermission("com.android.systemui", Uri.parse("android.resource://" + getPackageName() + "/" +R.raw.notification),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
     @Override

@@ -68,7 +68,6 @@ public class MyPagerAdapter extends PagerAdapter {
         mRefresher1.setOnRefreshListener(new MyListener());
         mAdapter1 = new NewOrderAdapter(mainActivity,mDot1);
         mAdapter1.setNewData();
-        JPushUtil.setNewOrderAdapter(mAdapter1);
         mListView1.setAdapter(mAdapter1);
         views.add(view1);
         mRefresher1.autoRefresh();
@@ -94,6 +93,13 @@ public class MyPagerAdapter extends PagerAdapter {
         mListView3.setAdapter(mAdapter3);
         views.add(view3);
         //mRefresher3.autoRefresh();
+        JPushUtil.initAdapter(mAdapter1,mAdapter2,mAdapter3);
+    }
+
+    public void setNewData(){
+        mAdapter1.setNewData();
+        mAdapter2.setNewData();
+        mAdapter3.setNewData();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.hualing.htk_merchant.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -7,9 +8,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.hualing.htk_merchant.adapter.DeliveryAdapter;
+import com.hualing.htk_merchant.adapter.FinishedAdapter;
 import com.hualing.htk_merchant.adapter.MyPagerAdapter;
 import com.hualing.htk_merchant.adapter.NewOrderAdapter;
 import com.hualing.htk_merchant.global.TheApplication;
+import com.hualing.htk_merchant.model.CommonMsg;
+import com.hualing.htk_merchant.utils.AsynClient;
+import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
+import com.hualing.htk_merchant.utils.MyHttpConfing;
+import com.loopj.android.http.RequestParams;
 
 import java.util.Set;
 
@@ -28,7 +37,14 @@ import cn.jpush.android.api.TagAliasCallback;
 public class JPushUtil {
 
     private static final String TAG = "JPush";
-    public static NewOrderAdapter newOrderAdapter;
+    public static NewOrderAdapter mAdapter1;
+    public static DeliveryAdapter mAdapter2;
+    public static FinishedAdapter mAdapter3;
+    public static final String NEW_ORDER="1";
+    public static final String CONFIRM_ORDER="2";
+    public static final String CANNEL_ORDER="3";
+    public static final String RECEIPT_ORDER="4";
+    public static final String DELETE_ORDER="5";
 
     // 这是来自 JPush Example 的设置别名的 Activity 里的代码。一般 App 的设置的调用入口，在任何方便的地方调用都可以。
     public static void setAlias(Context context,String alias) {
@@ -87,7 +103,44 @@ public class JPushUtil {
         }
     };
 
-    public static void setNewOrderAdapter(NewOrderAdapter newOrderAdapter){
-        JPushUtil.newOrderAdapter=newOrderAdapter;
+    public static void initAdapter(NewOrderAdapter mAdapter1, DeliveryAdapter mAdapter2, FinishedAdapter mAdapter3){
+        JPushUtil.mAdapter1=mAdapter1;
+        JPushUtil.mAdapter2=mAdapter2;
+        JPushUtil.mAdapter3=mAdapter3;
+    }
+
+    public static void sendNotification(final Activity context, String mobilePhone, String title, String content, String actionName){
+        RequestParams params = AsynClient.getRequestParams();
+
+        params.put("mobilePhone", mobilePhone);
+        params.put("title", title);
+        params.put("content", content);
+        params.put("actionName", actionName);
+
+        AsynClient.post(MyHttpConfing.sendNotification, context, params, new GsonHttpResponseHandler() {
+            @Override
+            protected Object parseResponse(String rawJsonData) throws Throwable {
+                return null;
+            }
+
+            @Override
+            public void onFailure(int statusCode, String rawJsonData, Object errorResponse) {
+                Log.e("rawJsonData===",""+rawJsonData);
+                Toast.makeText(context, "推送失败", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, String rawJsonResponse, Object response) {
+                Log.e("rawJsonResponse===",""+rawJsonResponse);
+
+                Gson gson = new Gson();
+                CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
+                if (commonMsg.getCode() == 100) {
+
+                } else {
+
+                }
+            }
+        });
     }
 }

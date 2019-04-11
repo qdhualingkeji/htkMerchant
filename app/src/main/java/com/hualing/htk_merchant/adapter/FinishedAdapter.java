@@ -15,6 +15,7 @@ import com.hualing.htk_merchant.entity.OrderRecordEntity;
 import com.hualing.htk_merchant.global.GlobalData;
 import com.hualing.htk_merchant.model.CommonMsg;
 import com.hualing.htk_merchant.model.OrderProduct;
+import com.hualing.htk_merchant.util.JPushUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
@@ -70,8 +71,11 @@ public class FinishedAdapter extends BaseAdapter {
                 OrderRecordEntity orderRecordEntity = gson.fromJson(rawJsonResponse, OrderRecordEntity.class);
                 if (orderRecordEntity.getCode() == 100) {
                     mData = orderRecordEntity.getData();
-                    notifyDataSetChanged();
                 }
+                else {
+                    mData.clear();
+                }
+                notifyDataSetChanged();
             }
         });
     }
@@ -196,6 +200,7 @@ public class FinishedAdapter extends BaseAdapter {
                 if(commonMsg.getCode()==0){
                     mData.remove(position);
                     notifyDataSetChanged();
+                    JPushUtil.sendNotification(context, GlobalData.userName, "商家接单app", "删除订单成功", JPushUtil.DELETE_ORDER);
                 }
 
                 context.showMessage(commonMsg.getMessage());

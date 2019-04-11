@@ -75,8 +75,11 @@ public class NewOrderAdapter extends BaseAdapter {
                 OrderRecordEntity orderRecordEntity = gson.fromJson(rawJsonResponse, OrderRecordEntity.class);
                 if (orderRecordEntity.getCode() == 100) {
                     mData = orderRecordEntity.getData();
-                    notifyDataSetChanged();
                 }
+                else{
+                    mData.clear();
+                }
+                notifyDataSetChanged();
             }
         });
     }
@@ -264,6 +267,7 @@ public class NewOrderAdapter extends BaseAdapter {
                 CommonMsg commonMsg = gson.fromJson(rawJsonResponse, CommonMsg.class);
                 mData.remove(position);
                 notifyDataSetChanged();
+                JPushUtil.sendNotification(context, GlobalData.userName, "商家接单app", "取消订单成功", JPushUtil.CANNEL_ORDER);
                 context.showMessage(commonMsg.getMessage());
                 context.hideLoadingDialog();
             }
@@ -301,6 +305,7 @@ public class NewOrderAdapter extends BaseAdapter {
                 if(commonMsg.getCode()==0){
                     mData.remove(position);
                     notifyDataSetChanged();
+                    JPushUtil.sendNotification(context, GlobalData.userName, "商家接单app", "确认订单成功", JPushUtil.CONFIRM_ORDER);
                     context.getmViewPager().setCurrentItem(1);
                 }
 

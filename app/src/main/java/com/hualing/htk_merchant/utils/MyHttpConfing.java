@@ -47,6 +47,10 @@ public class MyHttpConfing {
      *根据用户id查询类别
      */
     public static final String getCategoryListById = merchantAppUrl + "takeout/getCategoryListById";
+    /**
+     * 给商家接单app端推送消息
+     */
+    public static final String sendNotification = merchantAppUrl + "sendNotification";
 
     /* 用户注册 */
     public static final String registered = baseUrl + "register";

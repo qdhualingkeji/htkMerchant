@@ -8,10 +8,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.hualing.htk_merchant.R;
 import com.hualing.htk_merchant.activities.MainActivity;
 import com.hualing.htk_merchant.util.JPushUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cn.jpush.android.api.JPushInterface;
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -61,7 +65,32 @@ public class MyReceiver extends BroadcastReceiver {
             //JPushInterface.clearAllNotifications(TheApplication.getContext());
 
             receivingNotification(context, bundle);
-            JPushUtil.newOrderAdapter.setNewData();
+            String actionName = null;//bundle.getString("actionName");
+            try {
+                String extras = bundle.getString(JPushInterface.EXTRA_EXTRA);
+                JSONObject extrasJO = new JSONObject(extras);
+                actionName = extrasJO.getString("actionName");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            switch (actionName){
+                case JPushUtil.NEW_ORDER:
+                case JPushUtil.CANNEL_ORDER:
+                    JPushUtil.mAdapter1.setNewData();
+                    break;
+                case JPushUtil.CONFIRM_ORDER:
+                    JPushUtil.mAdapter1.setNewData();
+                    JPushUtil.mAdapter2.setNewData();
+                    break;
+                case JPushUtil.RECEIPT_ORDER:
+                    JPushUtil.mAdapter2.setNewData();
+                    JPushUtil.mAdapter3.setNewData();
+                    break;
+                case JPushUtil.DELETE_ORDER:
+                    JPushUtil.mAdapter3.setNewData();
+                    break;
+            }
 
         } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
             Log.e(TAG, "用户点击打开了通知");
@@ -85,7 +114,9 @@ public class MyReceiver extends BroadcastReceiver {
         //这一步必须要有而且setSmallIcon也必须要，没有就会设置自定义声音不成功
         notification.setAutoCancel(true).setSmallIcon(R.mipmap.ic_launcher);
         String alert = bundle.getString(JPushInterface.EXTRA_ALERT);
+        //Toast.makeText(context,"alert==="+alert,Toast.LENGTH_LONG).show();
         if (alert!=null&&!alert.equals("")){
+            //Toast.makeText(context,"播没播放声音？？？",Toast.LENGTH_LONG).show();
             notification.setSound(
                     Uri.parse("android.resource://" + context.getPackageName() + "/" +R.raw.notification));
         }
