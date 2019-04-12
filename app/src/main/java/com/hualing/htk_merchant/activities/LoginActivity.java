@@ -114,6 +114,7 @@ public class LoginActivity extends BaseActivity {
                     GlobalData.avatarImg = loginUserData.getAvatarImg();
                     GlobalData.shopName = loginUserData.getShopName();
                     GlobalData.state = loginUserData.getState();
+                    GlobalData.token = loginUserData.getToken();
 
                     JPushInterface.setAlias(LoginActivity.this , JPUSH_ONE  , GlobalData.userName);
 

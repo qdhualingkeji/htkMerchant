@@ -37,6 +37,8 @@ public class GlobalData {
 
     public static int state;
 
+    public static String token;
+
     //当前功能业务线
     public static int currentFunctionType = FunctionType.NON_SELECTED ;
 

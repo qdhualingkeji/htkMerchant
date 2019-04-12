@@ -83,6 +83,7 @@ public class LaunchActivity extends BaseActivity {
                     GlobalData.avatarImg = loginUserData.getAvatarImg();
                     GlobalData.shopName = loginUserData.getShopName();
                     GlobalData.state = loginUserData.getState();
+                    GlobalData.token = loginUserData.getToken();
 
                     //登录完毕,设置JPUSH的Alias识别
                     //String alias = loginUserData.getToken().toString().replaceAll("-", "");

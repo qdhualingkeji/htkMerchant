@@ -48,6 +48,10 @@ public class MyHttpConfing {
      */
     public static final String getCategoryListById = merchantAppUrl + "takeout/getCategoryListById";
     /**
+     * 查询账单记录
+     */
+    public static final String getBillRecord = merchantAppUrl + "getBillRecord";
+    /**
      * 给商家接单app端推送消息
      */
     public static final String sendNotification = merchantAppUrl + "sendNotification";
