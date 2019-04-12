@@ -222,7 +222,8 @@
             -->
         </activity>
         <activity android:name=".activities.AddProductActivity" />
-        <activity android:name=".activities.BillRecordActivity"></activity>
+        <activity android:name=".activities.BillRecordActivity" />
+        <activity android:name=".activities.BalanceActivity"></activity>
     </application>
 
 </manifest>

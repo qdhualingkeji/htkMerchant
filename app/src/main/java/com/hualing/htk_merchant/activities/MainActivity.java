@@ -188,7 +188,7 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    @OnClick({R.id.dot1,R.id.dot2,R.id.dot3,R.id.goAddProduct_layout,R.id.goProductList_layout,R.id.goBillRecord_layout,R.id.exit_but})
+    @OnClick({R.id.dot1,R.id.dot2,R.id.dot3,R.id.goAddProduct_layout,R.id.goProductList_layout,R.id.goBillRecord_layout,R.id.goBalance_layout,R.id.exit_but})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.dot1:
@@ -208,6 +208,9 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.goBillRecord_layout:
                 IntentUtil.openActivity(this, BillRecordActivity.class);
+                break;
+            case R.id.goBalance_layout:
+                IntentUtil.openActivity(this, BalanceActivity.class);
                 break;
             case R.id.exit_but:
                 GlobalData.userID = 0;

@@ -52,6 +52,10 @@ public class MyHttpConfing {
      */
     public static final String getBillRecord = merchantAppUrl + "getBillRecord";
     /**
+     * 获得提现信息
+     */
+    public static final String getBalance = merchantAppUrl + "getBalance";
+    /**
      * 给商家接单app端推送消息
      */
     public static final String sendNotification = merchantAppUrl + "sendNotification";
