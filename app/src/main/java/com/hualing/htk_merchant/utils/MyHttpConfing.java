@@ -56,6 +56,10 @@ public class MyHttpConfing {
      */
     public static final String getBalance = merchantAppUrl + "getBalance";
     /**
+     * 提现（转账）
+     */
+    public static final String withdraw = merchantAppUrl + "withdraw";
+    /**
      * 给商家接单app端推送消息
      */
     public static final String sendNotification = merchantAppUrl + "sendNotification";
