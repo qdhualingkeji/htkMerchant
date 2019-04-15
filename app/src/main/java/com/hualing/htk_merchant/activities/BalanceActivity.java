@@ -152,6 +152,9 @@ public class BalanceActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 确认提现
+     */
     private void toConfirmWithdrawal() {
         showLoadingDialog(BalanceActivity.this,"转账中");
         RequestParams params = AsynClient.getRequestParams();
@@ -184,6 +187,9 @@ public class BalanceActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 修改金额
+     */
     private void updateAmount() {
         finalMoneyTV.setVisibility(View.GONE);
         updateAmountBut.setVisibility(View.GONE);
@@ -192,6 +198,9 @@ public class BalanceActivity extends BaseActivity {
         toConfirmWithdrawalBut.setEnabled(false);
     }
 
+    /**
+     * 确认金额
+     */
     private void confirmTheAmount() {
         float usableBalance = Float.parseFloat(availableBalanceTV.getText().toString());
         String withdrawDepositAmountStr = withdrawDepositAmountET.getText().toString();
