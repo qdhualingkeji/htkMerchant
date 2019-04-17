@@ -1,15 +1,22 @@
 package com.hualing.htk_merchant.activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -100,6 +107,16 @@ public class AddProductActivity extends BaseActivity {
             initData();
         }
 
+        /*
+        try {
+            Bitmap bm = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Camera/IMG_20190406_113925.jpg");
+            showMessage("" + (bm == null));
+            imgUrlSDV.setImageBitmap(bm);
+        }catch (Exception e){
+            productNameET.setText(e.getMessage());
+        }
+        */
+
         if(reload) {
             Log.e("bbbbbbbb", "bbbbbbbbbb");
             showLoadingDialog(AddProductActivity.this,"加载中");
@@ -129,6 +146,8 @@ public class AddProductActivity extends BaseActivity {
             integralET.setText(String.valueOf(productJO.getInt("integral")));
 
             tempPhotoPath=getIntent().getStringExtra("tempPhotoPath");
+            //showMessage(tempPhotoPath);
+            //productNameET.setText(tempPhotoPath);
             Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
             imgUrlSDV.setImageBitmap(bm);
             imgUrlSDV.setTag(tempPhotoPath);

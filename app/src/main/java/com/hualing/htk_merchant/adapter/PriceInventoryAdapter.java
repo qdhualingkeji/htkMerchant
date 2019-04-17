@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -90,20 +91,38 @@ public class PriceInventoryAdapter extends BaseAdapter {
         priceET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Log.e("111111","1111111111");
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Log.e("22222222","22222222");
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                takeoutProduct.setPrice(Double.valueOf(priceET.getText().toString()));
-                notifyDataSetChanged();
+                //Log.e("3333333",""+editable.toString());
+                String priceStr = priceET.getText().toString();
+                if(TextUtils.isEmpty(priceStr)) {
+                    priceStr = "0.0";
+                    priceET.setText(priceStr);
+                }
+                takeoutProduct.setPrice(Double.valueOf(priceStr));
             }
         });
+        /*
+        priceET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //Log.e("4444", "edtUserName获取到焦点了。。。。。。");
+                } else {
+                    //Log.e("Price===", ""+((TakeoutProduct)PriceInventoryAdapter.this.getItem(position)).getPrice());
+                    //notifyDataSetChanged();
+                }
+            }
+        });
+        */
 
         final EditText priceCanheET = holder.priceCanheET;
         priceCanheET.setText(String.valueOf(takeoutProduct.getPriceCanhe()));
@@ -120,10 +139,27 @@ public class PriceInventoryAdapter extends BaseAdapter {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                takeoutProduct.setPriceCanhe(Double.valueOf(priceCanheET.getText().toString()));
-                notifyDataSetChanged();
+                String priceCanheStr = priceCanheET.getText().toString();
+                if(TextUtils.isEmpty(priceCanheStr)) {
+                    priceCanheStr = "0.0";
+                    priceCanheET.setText(priceCanheStr);
+                }
+                takeoutProduct.setPriceCanhe(Double.valueOf(priceCanheStr));
             }
         });
+        /*
+        priceCanheET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //Log.e("4444", "edtUserName获取到焦点了。。。。。。");
+                } else {
+                    //Log.e("PriceCanhe===", ""+((TakeoutProduct)PriceInventoryAdapter.this.getItem(position)).getPriceCanhe());
+                    //notifyDataSetChanged();
+                }
+            }
+        });
+        */
 
         final EditText inventoryET = holder.inventoryET;
         inventoryET.setText(String.valueOf(takeoutProduct.getInventory()));
@@ -141,8 +177,11 @@ public class PriceInventoryAdapter extends BaseAdapter {
             @Override
             public void afterTextChanged(Editable editable) {
                 String inventoryStr = inventoryET.getText().toString();
-                takeoutProduct.setInventory(Integer.valueOf(TextUtils.isEmpty(inventoryStr)?"0":inventoryStr));
-                notifyDataSetChanged();
+                if(TextUtils.isEmpty(inventoryStr)) {
+                    inventoryStr = "0";
+                    inventoryET.setText(inventoryStr);
+                }
+                takeoutProduct.setInventory(Integer.valueOf(inventoryStr));
             }
         });
         final EditText inventoryCountET = holder.inventoryCountET;
@@ -161,8 +200,11 @@ public class PriceInventoryAdapter extends BaseAdapter {
             @Override
             public void afterTextChanged(Editable editable) {
                 String inventoryCountStr = inventoryCountET.getText().toString();
-                takeoutProduct.setInventoryCount(Integer.valueOf(TextUtils.isEmpty(inventoryCountStr)?"0":inventoryCountStr));
-                notifyDataSetChanged();
+                if(TextUtils.isEmpty(inventoryCountStr)) {
+                    inventoryCountStr = "0";
+                    inventoryET.setText(inventoryCountStr);
+                }
+                takeoutProduct.setInventoryCount(Integer.valueOf(inventoryCountStr));
             }
         });
         holder.removeGGBut.setOnClickListener(new View.OnClickListener() {
