@@ -163,7 +163,6 @@ public class AddProductActivity extends BaseActivity {
     }
 
     private void toLogin(){
-        Log.e("aaaaaaaaaa","aaaaaaaaaa");
         RequestParams params = AsynClient.getRequestParams();
         params.put("userName", SharedPreferenceUtil.getMerchantInfo()[0]);
         params.put("password", SharedPreferenceUtil.getMerchantInfo()[1]);

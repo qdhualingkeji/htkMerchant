@@ -124,8 +124,9 @@ public class DeliveryAdapter extends BaseAdapter {
         opAdapter.setNewData(orderRecord.getProductLists());
         opAdapter.notifyDataSetChanged();
         holder.orderProductLV.setAdapter(opAdapter);
-
-        holder.jiSuanPaid(opAdapter.getmData());
+        holder.priceCanheTV.setText(orderRecord.getPriceCanhe()+"￥");
+        holder.deliveryFeeTV.setText(orderRecord.getDeliveryFee()+"￥");
+        holder.paidTV.setText("（已支付）￥"+orderRecord.getOrderAmount());
 
         holder.baiduMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +166,10 @@ public class DeliveryAdapter extends BaseAdapter {
         @BindView(R.id.orderProduct_lv)
         ListView orderProductLV;
         private NewOrderProductAdapter orderProductAdapter;
+        @BindView(R.id.priceCanhe_tv)
+        TextView priceCanheTV;
+        @BindView(R.id.deliveryFee_tv)
+        TextView deliveryFeeTV;
         @BindView(R.id.paid_tv)
         TextView paidTV;
         @BindView(R.id.receipt_but)
@@ -172,14 +177,6 @@ public class DeliveryAdapter extends BaseAdapter {
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
-        }
-
-        public void jiSuanPaid(List<OrderProduct> opList){
-            double sumPrice=0;
-            for(OrderProduct op:opList){
-                sumPrice+=op.getPrice();
-            }
-            paidTV.setText("（已支付）￥"+sumPrice);
         }
     }
 

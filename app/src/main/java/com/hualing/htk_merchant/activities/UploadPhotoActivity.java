@@ -64,9 +64,13 @@ public class UploadPhotoActivity extends BaseActivity {
      * **/
     public void uploadFromAlbum() {
         // TODO Auto-generated method stub
+        /*
         Intent intent=new Intent();
         intent.setType("image/");
         intent.setAction(intent.ACTION_GET_CONTENT);
+        */
+        Intent intent = new Intent(Intent.ACTION_PICK);//intent  action属性
+        intent.setType("image/*");//选择图片
         startActivityForResult(intent, ImageUtil.FROMALBUM);
     }
 
