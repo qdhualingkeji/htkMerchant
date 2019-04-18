@@ -54,6 +54,7 @@ public class ProductAdapter extends SectionedBaseAdapter {
         RequestParams params = AsynClient.getRequestParams();
         params.put("actionName", "getData");
         params.put("userId", GlobalData.userID);
+        Log.e("userId===",""+GlobalData.userID);
 
         AsynClient.post(MyHttpConfing.getProductData, context, params, new GsonHttpResponseHandler() {
             @Override

@@ -46,6 +46,7 @@ import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
+import com.hualing.htk_merchant.widget.PropertyGridView;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
@@ -69,20 +70,22 @@ public class AddProductActivity extends BaseActivity {
     Spinner categorySpinner;
     @BindView(R.id.imgUrl_sdv)
     SimpleDraweeView imgUrlSDV;
-    private List<TakeoutProduct> priceInventoryList;
-    private PriceInventoryAdapter priceInventoryAdapter;
-    @BindView(R.id.priceInventory_lv)
-    ListView priceInventoryLV;
     private List<ProductProperty> propertyList;
     private AddProductPropertyAdapter addProductPropertyAdapter;
     @BindView(R.id.property_gv)
-    GridView propertyGV;
+    PropertyGridView propertyGV;
     @BindView(R.id.description_et)
     EditText descriptionET;
+    @BindView(R.id.price_et)
+    EditText priceET;
+    @BindView(R.id.priceCanhe_et)
+    EditText priceCanheET;
+    @BindView(R.id.inventory_et)
+    EditText inventoryET;
+    @BindView(R.id.inventoryCount_et)
+    EditText inventoryCountET;
     @BindView(R.id.integral_et)
     EditText integralET;
-    @BindView(R.id.addGG_but)
-    public Button addGGBut;
     @BindView(R.id.addPro_but)
     public Button addProBut;
     private Integer categoryId;
@@ -107,18 +110,7 @@ public class AddProductActivity extends BaseActivity {
             initData();
         }
 
-        /*
-        try {
-            Bitmap bm = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Camera/IMG_20190406_113925.jpg");
-            showMessage("" + (bm == null));
-            imgUrlSDV.setImageBitmap(bm);
-        }catch (Exception e){
-            productNameET.setText(e.getMessage());
-        }
-        */
-
         if(reload) {
-            Log.e("bbbbbbbb", "bbbbbbbbbb");
             showLoadingDialog(AddProductActivity.this,"加载中");
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -144,26 +136,20 @@ public class AddProductActivity extends BaseActivity {
             }
             descriptionET.setText(productJO.getString("description"));
             integralET.setText(String.valueOf(productJO.getInt("integral")));
+            priceET.setText(String.valueOf(productJO.getDouble("price")));
+            priceCanheET.setText(String.valueOf(productJO.getDouble("priceCanhe")));
+            inventoryET.setText(String.valueOf(productJO.getInt("inventory")));
+            inventoryCountET.setText(String.valueOf(productJO.getInt("inventoryCount")));
 
             tempPhotoPath=getIntent().getStringExtra("tempPhotoPath");
-            //showMessage(tempPhotoPath);
-            //productNameET.setText(tempPhotoPath);
-            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
-            imgUrlSDV.setImageBitmap(bm);
-            imgUrlSDV.setTag(tempPhotoPath);
-
-            String productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
-            JSONArray productJA = new JSONArray(productParamsJAStr);
-            for (int i=0;i<productJA.length();i++){
-                TakeoutProduct priceInventory=new TakeoutProduct();
-                JSONObject priceInventoryJO = (JSONObject)productJA.get(i);
-                priceInventory.setPrice(priceInventoryJO.getDouble("price"));
-                priceInventory.setPriceCanhe(priceInventoryJO.getDouble("priceCanhe"));
-                priceInventory.setInventory(priceInventoryJO.getInt("inventory"));
-                priceInventory.setInventoryCount(priceInventoryJO.getInt("inventoryCount"));
-                priceInventoryList.add(priceInventory);
+            if(TextUtils.isEmpty(tempPhotoPath)) {
+                imgUrlSDV.setImageResource(R.drawable.uppic);
             }
-            priceInventoryAdapter.notifyDataSetChanged();
+            else {
+                Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
+                imgUrlSDV.setImageBitmap(bm);
+                imgUrlSDV.setTag(tempPhotoPath);
+            }
 
             String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
             Log.e("productPropertyJAStr===",""+productPropertyJAStr);
@@ -223,7 +209,6 @@ public class AddProductActivity extends BaseActivity {
 
     private void initData(){
         initCategorySpinner();
-        initPriceInventory();
         initPropertyGV();
     }
 
@@ -235,14 +220,6 @@ public class AddProductActivity extends BaseActivity {
             addProductPropertyAdapter.addProperty();
         }
         propertyGV.setAdapter(addProductPropertyAdapter);
-    }
-
-    private void initPriceInventory() {
-        priceInventoryList=new ArrayList<TakeoutProduct>();
-        priceInventoryAdapter = new PriceInventoryAdapter(AddProductActivity.this, priceInventoryList);
-        if(!reload)
-            priceInventoryAdapter.addGG();
-        priceInventoryLV.setAdapter(priceInventoryAdapter);
     }
 
     private void initCategorySpinner() {
@@ -313,29 +290,14 @@ public class AddProductActivity extends BaseActivity {
         return R.layout.activity_add_product;
     }
 
-    @OnClick({R.id.addGG_but,R.id.addPro_but,R.id.imgUrl_sdv,R.id.save_but})
+    @OnClick({R.id.addPro_but,R.id.imgUrl_sdv,R.id.save_but})
     public void onViewClicked(View v) {
         switch (v.getId()){
-            case R.id.addGG_but:
-                addGG();
-                break;
             case R.id.addPro_but:
                 addProperty();
                 break;
             case R.id.imgUrl_sdv:
                 uploadPhoto();
-                /*
-                try {
-                    Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
-                    intent.putExtra("productParamsJOStr", initProductParamsJOStr());
-                    intent.putExtra("productParamsJAStr", initProductParamsJAStr());
-                    intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
-                    startActivity(intent);
-                    finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                */
                 break;
             case R.id.save_but:
                 try {
@@ -378,7 +340,6 @@ public class AddProductActivity extends BaseActivity {
                 try {
                     Intent intent=new Intent(AddProductActivity.this,UploadPhotoActivity.class);
                     intent.putExtra("productParamsJOStr", initProductParamsJOStr());
-                    intent.putExtra("productParamsJAStr", initProductParamsJAStr());
                     intent.putExtra("productPropertyJAStr",initProductPropertyJAStr());
                     intent.putExtra("activityFrom",ImageUtil.ADDFROM);
                     intent.putExtra("uploadFrom",index);
@@ -415,11 +376,12 @@ public class AddProductActivity extends BaseActivity {
     private void addProduct() throws JSONException, FileNotFoundException {
         RequestParams params = AsynClient.getRequestParams();
         params.put("takeoutProductJOStr", initProductParamsJOStr());
-        params.put("takeoutProductJAStr", initProductParamsJAStr());
         params.put("takeoutProductPropertyJAStr",initProductPropertyJAStr());
 
         //params.put("imgFile", new File("/mnt/m_external_sd/DCIM/Camera/zhoukaixiang.jpg"));
-        params.put("imgFile", new File(imgUrlSDV.getTag().toString()));
+        Object imgUrlTag = imgUrlSDV.getTag();
+        if(imgUrlTag!=null)
+            params.put("imgFile", new File(imgUrlTag.toString()));
         params.put("userId", GlobalData.userID);
 
         showLoadingDialog(AddProductActivity.this,"上传中");
@@ -463,24 +425,27 @@ public class AddProductActivity extends BaseActivity {
         return ja.toString();
     }
 
-    private String initProductParamsJAStr() throws JSONException {
-        JSONArray ja = new JSONArray();
-        for (TakeoutProduct priceInventory:priceInventoryList){
-            JSONObject jo = new JSONObject();
-            jo.put("price",priceInventory.getPrice());
-            jo.put("priceCanhe",priceInventory.getPriceCanhe());
-            jo.put("inventory",priceInventory.getInventory());
-            jo.put("inventoryCount",priceInventory.getInventoryCount());
-            ja.put(jo);
-        }
-        return ja.toString();
-    }
-
     private String initProductParamsJOStr() throws JSONException {
         JSONObject jo = new JSONObject();
         jo.put("productName",productNameET.getText().toString());
         jo.put("categoryId",categoryId);
         jo.put("description",descriptionET.getText().toString());
+        String priceStr = priceET.getText().toString();
+        if(TextUtils.isEmpty(priceStr))
+            priceStr="0.0";
+        jo.put("price",priceStr);
+        String priceCanheStr = priceCanheET.getText().toString();
+        if(TextUtils.isEmpty(priceCanheStr))
+            priceCanheStr="0.0";
+        jo.put("priceCanhe",priceCanheStr);
+        String inventoryStr = inventoryET.getText().toString();
+        if(TextUtils.isEmpty(inventoryStr))
+            inventoryStr="0";
+        jo.put("inventory",inventoryStr);
+        String inventoryCountStr = inventoryCountET.getText().toString();
+        if(TextUtils.isEmpty(inventoryCountStr))
+            inventoryCountStr="0";
+        jo.put("inventoryCount",inventoryCountStr);
         String integralStr = integralET.getText().toString();
         jo.put("integral",Integer.valueOf(TextUtils.isEmpty(integralStr)?"0":integralStr));
         jo.put("time","all,");//全时段售卖
@@ -498,16 +463,4 @@ public class AddProductActivity extends BaseActivity {
             addProBut.setVisibility(Button.GONE);
         }
     }
-
-    private void addGG() {
-        List<TakeoutProduct> mData = priceInventoryAdapter.getmData();
-        int size = mData.size();
-        if(size<6) {
-            priceInventoryAdapter.addGG();
-        }
-        if(size>=5) {
-            addGGBut.setVisibility(Button.GONE);
-        }
-    }
-
 }

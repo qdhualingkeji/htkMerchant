@@ -89,36 +89,30 @@ public class UploadPhotoActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //拍摄图片返回情况
+        int activityFrom = getIntent().getIntExtra("activityFrom", 0);
+        Intent intent=new Intent(UploadPhotoActivity.this,activityFrom==ImageUtil.ADDFROM?AddProductActivity.class:EditProductActivity.class);
+
+        String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
+        intent.putExtra("productParamsJOStr", productParamsJOStr);
+
+        if(activityFrom==ImageUtil.EDITFROM) {
+            int productId = getIntent().getIntExtra("productId", 0);
+            intent.putExtra("productId",productId);
+        }
+
+        String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
+        intent.putExtra("productPropertyJAStr", productPropertyJAStr);
+
         if(resultCode==RESULT_OK){
             String tempPhotoPath = null;
             if(requestCode==ImageUtil.FROMALBUM)
                 tempPhotoPath=ImageUtil.getPhotoPath(data,UploadPhotoActivity.this,ImageUtil.FROMALBUM);
             else if(requestCode==ImageUtil.FROMTAKE)
                 tempPhotoPath=ImageUtil.getPhotoPath(data,UploadPhotoActivity.this,ImageUtil.FROMTAKE);
-            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
-
-            int activityFrom = getIntent().getIntExtra("activityFrom", 0);
-            Intent intent=new Intent(UploadPhotoActivity.this,activityFrom==ImageUtil.ADDFROM?AddProductActivity.class:EditProductActivity.class);
-
-            String productParamsJOStr = getIntent().getStringExtra("productParamsJOStr");
-            intent.putExtra("productParamsJOStr", productParamsJOStr);
-
-            if(activityFrom==ImageUtil.ADDFROM) {
-                String productParamsJAStr = getIntent().getStringExtra("productParamsJAStr");
-                intent.putExtra("productParamsJAStr", productParamsJAStr);
-            }
-            else{
-                int productId = getIntent().getIntExtra("productId", 0);
-                intent.putExtra("productId",productId);
-            }
-
-            String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
-            intent.putExtra("productPropertyJAStr", productPropertyJAStr);
-
             intent.putExtra("tempPhotoPath", tempPhotoPath);
-            intent.putExtra("reload",true);
-            startActivity(intent);
-            finish();
         }
+        intent.putExtra("reload",true);
+        startActivity(intent);
+        finish();
     }
 }

@@ -2,6 +2,7 @@ package com.hualing.htk_merchant.adapter;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -97,7 +98,7 @@ public class AddProductPropertyAdapter extends BaseAdapter {
             @Override
             public void afterTextChanged(Editable editable) {
                 productProperty.setPropertyName(propertyNameET.getText().toString());
-                notifyDataSetChanged();
+                //notifyDataSetChanged();
             }
         });
         holder.removeProBut.setOnClickListener(new View.OnClickListener() {

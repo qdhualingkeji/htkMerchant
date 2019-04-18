@@ -196,6 +196,7 @@
                     android:id="@+id/price_et"
                     android:layout_width="160dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 
@@ -228,6 +229,7 @@
                     android:id="@+id/priceCanhe_et"
                     android:layout_width="160dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 
@@ -252,6 +254,7 @@
                     android:id="@+id/inventory_et"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 
@@ -269,6 +272,7 @@
                     android:id="@+id/inventoryCount_et"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 
@@ -307,10 +311,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical" >
 
-                <GridView
+                <com.hualing.htk_merchant.widget.PropertyGridView
                     android:id="@+id/property_gv"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:columnWidth="150dp"
                     android:numColumns="2"/>
 
@@ -319,11 +323,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" >
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical" >
 
                 <TextView
                     android:layout_width="180dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:text="积分（用户购买该商品后，返回多少积分?）"
@@ -335,6 +340,7 @@
                     android:id="@+id/integral_et"
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 

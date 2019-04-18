@@ -77,18 +77,24 @@ public class MyReceiver extends BroadcastReceiver {
             switch (actionName){
                 case JPushUtil.NEW_ORDER:
                 case JPushUtil.CANNEL_ORDER:
-                    JPushUtil.mAdapter1.setNewData();
+                    if(JPushUtil.mAdapter1!=null)
+                        JPushUtil.mAdapter1.setNewData();
                     break;
                 case JPushUtil.CONFIRM_ORDER:
-                    JPushUtil.mAdapter1.setNewData();
-                    JPushUtil.mAdapter2.setNewData();
+                    if(JPushUtil.mAdapter1!=null)
+                        JPushUtil.mAdapter1.setNewData();
+                    if(JPushUtil.mAdapter2!=null)
+                        JPushUtil.mAdapter2.setNewData();
                     break;
                 case JPushUtil.RECEIPT_ORDER:
-                    JPushUtil.mAdapter2.setNewData();
-                    JPushUtil.mAdapter3.setNewData();
+                    if(JPushUtil.mAdapter2!=null)
+                        JPushUtil.mAdapter2.setNewData();
+                    if(JPushUtil.mAdapter3!=null)
+                        JPushUtil.mAdapter3.setNewData();
                     break;
                 case JPushUtil.DELETE_ORDER:
-                    JPushUtil.mAdapter3.setNewData();
+                    if(JPushUtil.mAdapter3!=null)
+                        JPushUtil.mAdapter3.setNewData();
                     break;
             }
 

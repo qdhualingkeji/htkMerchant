@@ -20,6 +20,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * 这个适配器是之前一个商品对应多种规格时加的，现在改成每次添加商品只能有一种规格了，这个类已经没用了
+ */
 public class PriceInventoryAdapter extends BaseAdapter {
 
     private List<TakeoutProduct> mData;
@@ -52,7 +55,7 @@ public class PriceInventoryAdapter extends BaseAdapter {
         mData.remove(position);
         notifyDataSetChanged();
         if(mData.size()<6){
-            context.addGGBut.setVisibility(Button.VISIBLE);
+            //context.addGGBut.setVisibility(Button.VISIBLE);
         }
     }
 

@@ -12,9 +12,11 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ListAdapter;
 import android.widget.Spinner;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -35,6 +37,7 @@ import com.hualing.htk_merchant.util.SharedPreferenceUtil;
 import com.hualing.htk_merchant.utils.AsynClient;
 import com.hualing.htk_merchant.utils.GsonHttpResponseHandler;
 import com.hualing.htk_merchant.utils.MyHttpConfing;
+import com.hualing.htk_merchant.widget.PropertyGridView;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
@@ -71,7 +74,7 @@ public class EditProductActivity extends BaseActivity {
     private List<ProductProperty> propertyList;
     private EditProductPropertyAdapter editProductPropertyAdapter;
     @BindView(R.id.property_gv)
-    GridView propertyGV;
+    PropertyGridView propertyGV;
     @BindView(R.id.integral_et)
     EditText integralET;
     private Integer id;
@@ -129,9 +132,11 @@ public class EditProductActivity extends BaseActivity {
             id=productJO.getInt("id");
 
             tempPhotoPath=getIntent().getStringExtra("tempPhotoPath");
-            Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
-            imgUrlSDV.setImageBitmap(bm);
-            imgUrlSDV.setTag(tempPhotoPath);
+            if(!TextUtils.isEmpty(tempPhotoPath)) {
+                Bitmap bm = BitmapFactory.decodeFile(tempPhotoPath);
+                imgUrlSDV.setImageBitmap(bm);
+                imgUrlSDV.setTag(tempPhotoPath);
+            }
 
             propertyList.clear();
             String productPropertyJAStr = getIntent().getStringExtra("productPropertyJAStr");
@@ -351,7 +356,9 @@ public class EditProductActivity extends BaseActivity {
         RequestParams params = AsynClient.getRequestParams();
         params.put("takeoutProductJOStr", initProductParamsJOStr());
         params.put("takeoutProductPropertyJAStr",initProductPropertyJAStr());
-        params.put("imgFile", new File(imgUrlSDV.getTag().toString()));
+        Object imgUrlTag = imgUrlSDV.getTag();
+        if(imgUrlTag!=null)
+            params.put("imgFile", new File(imgUrlTag.toString()));
 
         showLoadingDialog(EditProductActivity.this,"上传中");
         AsynClient.post(MyHttpConfing.saveProduct, EditProductActivity.this, params, new GsonHttpResponseHandler() {

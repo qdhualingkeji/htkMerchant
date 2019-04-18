@@ -175,24 +175,107 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical" >
 
-                <ListView
-                    android:id="@+id/priceInventory_lv"
-                    android:layout_width="match_parent"
-                    android:layout_height="1000dp"
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="价格"
+                    android:textColor="@color/divide_dark_gray_color"
+                    android:textSize="16sp"
                     android:layout_marginLeft="20dp"/>
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="￥"
+                    android:textColor="#000"
+                    android:textSize="20sp"/>
+
+                <EditText
+                    android:id="@+id/price_et"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical" >
+                android:layout_gravity="center_vertical" >
 
-                <Button
-                    android:id="@+id/addGG_but"
-                    android:layout_width="200dp"
-                    android:layout_height="match_parent"
-                    android:text="添加规格（最多6个）"/>
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="餐盒费"
+                    android:textColor="@color/divide_dark_gray_color"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="20dp"/>
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="￥"
+                    android:textColor="#000"
+                    android:textSize="20sp"/>
+
+                <EditText
+                    android:id="@+id/priceCanhe_et"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="库存（当前/最大）"
+                    android:textColor="@color/divide_dark_gray_color"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="20dp"/>
+
+                <EditText
+                    android:id="@+id/inventory_et"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="/"
+                    android:textColor="@color/divide_dark_gray_color"
+                    android:textSize="16sp"
+                    android:layout_marginRight="15dp"/>
+
+                <EditText
+                    android:id="@+id/inventoryCount_et"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"/>
 
             </LinearLayout>
 
@@ -229,10 +312,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical" >
 
-                <GridView
+                <com.hualing.htk_merchant.widget.PropertyGridView
                     android:id="@+id/property_gv"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:columnWidth="150dp"
                     android:numColumns="2"/>
 
@@ -255,11 +338,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" >
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical" >
 
                 <TextView
                     android:layout_width="180dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:text="积分（用户购买该商品后，返回多少积分?）"
@@ -271,6 +355,7 @@
                     android:id="@+id/integral_et"
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:layout_weight="1"
                     android:layout_marginRight="15dp"/>
 
