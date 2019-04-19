@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
@@ -116,13 +117,7 @@ public class EditProductActivity extends BaseActivity {
             JSONObject productJO = new JSONObject(productParamsJOStr);
             productNameET.setText(productJO.getString("productName"));
             categoryId= productJO.getInt("categoryId");
-            for (int i=0;i<categoryAdapter.getCount();i++) {
-                TakeoutCategory tc = (TakeoutCategory) categoryAdapter.getItem(i);
-                if(tc.getId()==categoryId){
-                    categorySpinner.setSelection(i);
-                    break;
-                }
-            }
+            setCategorySpinnerDefaultId(categoryId);
             descriptionET.setText(productJO.getString("description"));
             integralET.setText(String.valueOf(productJO.getInt("integral")));
             priceET.setText(String.valueOf(productJO.getDouble("price")));
@@ -152,6 +147,19 @@ public class EditProductActivity extends BaseActivity {
             hideLoadingDialog();
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * categoryId 需要设置的默认值
+     */
+    private void setCategorySpinnerDefaultId(Integer categoryId){
+        for (int i=0;i<categoryAdapter.getCount();i++) {
+            TakeoutCategory tc = (TakeoutCategory) categoryAdapter.getItem(i);
+            if(tc.getId()==categoryId){
+                categorySpinner.setSelection(i);
+                break;
+            }
         }
     }
 
@@ -224,6 +232,8 @@ public class EditProductActivity extends BaseActivity {
                     TakeoutProduct takeoutProduct = productDetail.getDataPro();
                     productNameET.setText(takeoutProduct.getProductName());
                     initCategorySpinner(productDetail.getData());
+                    categoryId=takeoutProduct.getCategoryId();
+                    setCategorySpinnerDefaultId(categoryId);
                     Uri uri = Uri.parse(takeoutProduct.getImgUrl());
                     imgUrlSDV.setImageURI(uri);
                     descriptionET.setText(takeoutProduct.getDescription());
