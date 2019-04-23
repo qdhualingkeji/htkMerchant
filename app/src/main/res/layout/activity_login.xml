@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="我是骑手小哥，"
+            android:text="商家版App"
             android:textColor="#FFF"
             android:textSize="23sp"
             android:textStyle="bold"
@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="我相信，"
+            android:text="用心做外卖"
             android:textColor="#FFF"
             android:textSize="18sp"
             android:layout_marginTop="5dp"
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="付出总有回报！"
+            android:text="情暖吃饭人"
             android:textColor="#FFF"
             android:textSize="18sp"
             android:layout_marginTop="5dp"
