@@ -124,6 +124,7 @@ public class DeliveryAdapter extends BaseAdapter {
         opAdapter.setNewData(orderRecord.getProductLists());
         opAdapter.notifyDataSetChanged();
         holder.orderProductLV.setAdapter(opAdapter);
+        context.setListViewHeightBasedOnChildren(holder.orderProductLV);
         holder.priceCanheTV.setText(orderRecord.getPriceCanhe()+"￥");
         holder.deliveryFeeTV.setText(orderRecord.getDeliveryFee()+"￥");
         holder.paidTV.setText("（已支付）￥"+orderRecord.getOrderAmount());

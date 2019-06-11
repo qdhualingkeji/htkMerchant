@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -126,6 +127,7 @@ public class NewOrderAdapter extends BaseAdapter {
         opAdapter.setNewData(orderRecord.getProductLists());
         opAdapter.notifyDataSetChanged();
         holder.orderProductLV.setAdapter(opAdapter);
+        context.setListViewHeightBasedOnChildren(holder.orderProductLV);
         holder.priceCanheTV.setText(orderRecord.getPriceCanhe()+"￥");
         holder.deliveryFeeTV.setText(orderRecord.getDeliveryFee()+"￥");
         holder.paidTV.setText("（已支付）￥"+orderRecord.getOrderAmount());

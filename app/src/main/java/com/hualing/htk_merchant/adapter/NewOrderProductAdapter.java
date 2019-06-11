@@ -1,5 +1,6 @@
 package com.hualing.htk_merchant.adapter;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
