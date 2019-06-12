@@ -420,10 +420,10 @@ public class MainActivity extends BaseActivity {
             listItem.measure(0, 0);
             // 统计所有子项的总高度
             //totalHeight += listItem.getMeasuredHeight();
-            totalHeight += 80;
+            totalHeight += listItem.getLayoutParams().height;
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        params.height = totalHeight + listView.getDividerHeight() * listAdapter.getCount();
         //params.height = 400;
         listView.setLayoutParams(params);
     }
