@@ -127,6 +127,7 @@ public class DeliveryAdapter extends BaseAdapter {
         context.setListViewHeightBasedOnChildren(holder.orderProductLV);
         holder.priceCanheTV.setText(orderRecord.getPriceCanhe()+"￥");
         holder.deliveryFeeTV.setText(orderRecord.getDeliveryFee()+"￥");
+        holder.remarkTV.setText(orderRecord.getRemark());
         holder.paidTV.setText("（已支付）￥"+orderRecord.getOrderAmount());
 
         holder.baiduMap.setOnClickListener(new View.OnClickListener() {
@@ -171,6 +172,8 @@ public class DeliveryAdapter extends BaseAdapter {
         TextView priceCanheTV;
         @BindView(R.id.deliveryFee_tv)
         TextView deliveryFeeTV;
+        @BindView(R.id.remark_tv)
+        TextView remarkTV;
         @BindView(R.id.paid_tv)
         TextView paidTV;
         @BindView(R.id.receipt_but)

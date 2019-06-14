@@ -130,6 +130,7 @@ public class NewOrderAdapter extends BaseAdapter {
         context.setListViewHeightBasedOnChildren(holder.orderProductLV);
         holder.priceCanheTV.setText(orderRecord.getPriceCanhe()+"￥");
         holder.deliveryFeeTV.setText(orderRecord.getDeliveryFee()+"￥");
+        holder.remarkTV.setText(orderRecord.getRemark());
         holder.paidTV.setText("（已支付）￥"+orderRecord.getOrderAmount());
 
         int deliveryFlag = 0;
@@ -174,6 +175,8 @@ public class NewOrderAdapter extends BaseAdapter {
         TextView priceCanheTV;
         @BindView(R.id.deliveryFee_tv)
         TextView deliveryFeeTV;
+        @BindView(R.id.remark_tv)
+        TextView remarkTV;
         @BindView(R.id.paid_tv)
         TextView paidTV;
         @BindView(R.id.ziXing_rb)
